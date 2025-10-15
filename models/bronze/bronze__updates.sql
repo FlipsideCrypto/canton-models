@@ -1,6 +1,6 @@
 {{ config (
     materialized = 'incremental',
-    cluster_by = ['record_time::DATE', 'migration_id','inserted_timestamp::DATE'],,
+    cluster_by = ['record_time::DATE', 'migration_id','inserted_timestamp::DATE'],
     tags = ['bronze_core']
 ) }}
 
