@@ -1,0 +1,30 @@
+target/
+dbt_modules/
+# newer versions of dbt use this directory instead of dbt_modules for test dependencies
+dbt_packages/
+logs/
+
+.venv/
+.python-version
+dbt-env/
+venv/
+package-lock.yml
+
+# Visual Studio Code files
+*/.vscode
+*.code-workspace
+.history/
+**/.DS_Store
+.vscode/
+.env
+.DS_Store
+.user.yml
+
+# Cursor configuration
+.cursor/*
+!.cursor/rules
+
+# Local Claude configuration
+.claude/settings.local.json
+.claude/log
+CLAUDE.local.md
