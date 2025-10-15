@@ -1,0 +1,23 @@
+version: 2
+
+sources:
+  - name: bronze_streamline
+    database: streamline
+    schema: "{{ 'canton' if target.database == 'CANTON' else 'canton_dev' }}"
+    tables:
+      - name: updates
+ 
+  - name: crosschain
+    database: "{{ 'crosschain' if target.database == 'CANTON' else 'crosschain_dev' }}"
+    schema: core
+    tables:
+      - name: address_tags
+      - name: dim_dates
+  - name: crosschain_silver
+    database: "{{ 'crosschain' if target.database == 'CANTON' else 'crosschain_dev' }}"
+    schema: silver
+    tables:
+      - name: number_sequence
+      - name: labels_combined
+      - name: complete_token_asset_metadata
+      - name: complete_token_prices
