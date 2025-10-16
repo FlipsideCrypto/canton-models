@@ -44,7 +44,9 @@ SELECT
         'https://api.cantonnodes.com/v2/updates',
         OBJECT_CONSTRUCT(
             'Content-Type',
-            'application/json'
+            'application/json',
+            'fsc-compression-mode',
+            'always'
         ),
         OBJECT_CONSTRUCT(
             'after',
