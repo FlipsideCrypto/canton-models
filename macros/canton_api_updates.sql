@@ -4,7 +4,7 @@
         from_table
     ) %}
 SELECT
-    canton.live.udf_api(
+    canton.live.udf_api_v2(
         'POST',
         'https://api.cantonnodes.com/v2/updates',
         OBJECT_CONSTRUCT(
@@ -25,7 +25,8 @@ SELECT
             1000,
             'daml_value_encoding',
             'compact_json'
-        )
+        ),
+        TRUE -- use async for large content payloads
     ) :data AS response
 FROM
     {{ from_table }}

@@ -39,14 +39,12 @@ SELECT
         max_record_time,
         'YYYYMMDD'
     ) AS partition_key,
-    {{ target.database }}.live.udf_api(
+    {{ target.database }}.live.udf_api_v2(
         'POST',
         'https://api.cantonnodes.com/v2/updates',
         OBJECT_CONSTRUCT(
             'Content-Type',
-            'application/json',
-            'fsc-compression-mode',
-            'always'
+            'application/json'
         ),
         OBJECT_CONSTRUCT(
             'after',
@@ -62,7 +60,8 @@ SELECT
             'compact_json',
             'method',
             'nothing'
-        )
+        ),
+        TRUE
     ) AS request
 FROM
     max_record_time
