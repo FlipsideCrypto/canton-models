@@ -100,5 +100,11 @@ vars:
         - AWS_LAMBDA_CANTON_API
         - INTERNAL_DEV
         - DBT_CLOUD_CANTON
-
+    prod-2xl:
+      API_INTEGRATION: AWS_CANTON_API_PROD_V2
+      EXTERNAL_FUNCTION_URI: niz48dl8gb.execute-api.us-east-1.amazonaws.com/prod/
+      ROLES:
+        - AWS_LAMBDA_CANTON_API
+        - INTERNAL_DEV
+        - DBT_CLOUD_CANTON
  

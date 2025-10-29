@@ -41,7 +41,7 @@ SELECT
         ELSE FALSE
     END AS is_root_event,
     f.key :: STRING AS event_id,
-    REPLACE(REPLACE(f.key, update_id), ':') AS event_index,
+    REPLACE(REPLACE(f.key, update_id), ':') :: INT AS event_index,
     f.value AS event_json,
     f.value :choice :: STRING AS choice,
     _inserted_timestamp,
