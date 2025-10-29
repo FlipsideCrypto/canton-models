@@ -41,10 +41,13 @@ SELECT
         ELSE FALSE
     END AS is_root_event,
     f.key :: STRING AS event_id,
+    REPLACE(REPLACE(f.key, update_id), ':') AS event_index,
     f.value AS event_json,
+    f.value :choice :: STRING AS choice,
     _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
-    SYSDATE() AS modified_timestamp
+    SYSDATE() AS modified_timestamp,
+    '{{ invocation_id }}' AS _invocation_id
 FROM
     base_updates,
     LATERAL FLATTEN(
