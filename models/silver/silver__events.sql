@@ -3,6 +3,8 @@
     unique_key = ['effective_at', 'migration_id', 'event_id'],
     cluster_by = ['effective_at::DATE', 'migration_id'],
     incremental_strategy = 'merge',
+    incremental_predicates = ["dynamic_range_predicate", "effective_at::date"],
+    merge_exclude_columns = ["inserted_timestamp"],
     tags = ['core']
 ) }}
 
@@ -52,4 +54,9 @@ FROM
     base_updates,
     LATERAL FLATTEN(
         input => update_json :events_by_id
-    ) f
+    ) f qualify ROW_NUMBER() over (
+        PARTITION BY event_id,
+        migration_id
+        ORDER BY
+            _inserted_timestamp DESC
+    ) = 1
