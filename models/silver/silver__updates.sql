@@ -43,4 +43,9 @@ SELECT
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp
 FROM
-    base_updates
+    base_updates qualify ROW_NUMBER() over (
+        PARTITION BY update_id,
+        migration_id
+        ORDER BY
+            _inserted_timestamp DESC
+    ) = 1
