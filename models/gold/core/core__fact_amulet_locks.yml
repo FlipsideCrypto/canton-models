@@ -1,0 +1,67 @@
+version: 2
+
+models:
+  - name: core__fact_amulet_locks
+    description: '{{ doc("core__fact_amulet_locks") }}'
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: effective_at
+          interval: 24
+    columns:
+      - name: update_id
+        description: '{{ doc("col_update_id") }}'
+        tests:
+          - not_null
+      - name: migration_id
+        description: '{{ doc("col_migration_id") }}'
+      - name: record_time
+        description: '{{ doc("col_record_time") }}'
+      - name: effective_at
+        description: '{{ doc("col_effective_at") }}'
+        tests:
+          - not_null
+      - name: event_id
+        description: '{{ doc("col_event_id") }}'
+        tests:
+          - not_null
+          - unique
+      - name: event_index
+        description: '{{ doc("col_event_index") }}'
+        tests:
+          - not_null
+      - name: locked_amount
+        description: '{{ doc("col_locked_amount") }}'
+      - name: amount_created_at_round
+        description: '{{ doc("col_amount_created_at_round") }}'
+      - name: rate_per_round
+        description: '{{ doc("col_rate_per_round") }}'
+      - name: amulet_owner
+        description: '{{ doc("col_amulet_owner") }}'
+      - name: lock_details
+        description: 'JSON object containing full lock configuration'
+      - name: lock_expires_at
+        description: '{{ doc("col_lock_expires_at") }}'
+      - name: lock_holders
+        description: '{{ doc("col_lock_holders") }}'
+      - name: locked_amulet_contract_id
+        description: '{{ doc("col_locked_amulet_contract_id") }}'
+      - name: created_at
+        description: '{{ doc("col_created_at") }}'
+      - name: signatories
+        description: '{{ doc("col_signatories") }}'
+      - name: observers
+        description: '{{ doc("col_observers") }}'
+      - name: package_name
+        description: '{{ doc("col_package_name") }}'
+      - name: template_id
+        description: '{{ doc("col_template_id") }}'
+      - name: fact_lock_id
+        description: 'Surrogate key generated from event_id'
+        tests:
+          - not_null
+          - unique
+      - name: inserted_timestamp
+        description: '{{ doc("col_inserted_timestamp") }}'
+      - name: modified_timestamp
+        description: '{{ doc("col_modified_timestamp") }}'

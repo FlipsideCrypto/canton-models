@@ -1,0 +1,74 @@
+version: 2
+
+models:
+  - name: core__ez_amulet_lock_lifecycle
+    description: '{{ doc("core__ez_amulet_lock_lifecycle") }}'
+    config:
+      +where: "most_recent_activity::DATE > dateadd(hour, -36, sysdate())"
+    columns:
+      - name: locked_amulet_contract_id
+        description: '{{ doc("col_locked_amulet_contract_id") }}'
+        tests:
+          - not_null
+      - name: amulet_owner
+        description: '{{ doc("col_amulet_owner") }}'
+        tests:
+          - not_null
+      - name: lock_holders
+        description: '{{ doc("col_lock_holders") }}'
+      - name: locked_at
+        description: 'Timestamp when the amulet was locked'
+        tests:
+          - not_null
+      - name: lock_expires_at
+        description: '{{ doc("col_lock_expires_at") }}'
+      - name: unlocked_at
+        description: 'Timestamp when the amulet was unlocked (NULL if still locked)'
+      - name: locked_amount
+        description: '{{ doc("col_locked_amount") }}'
+      - name: unlocked_amount
+        description: '{{ doc("col_unlocked_amount") }}'
+      - name: amount_created_at_round
+        description: '{{ doc("col_amount_created_at_round") }}'
+      - name: rate_per_round
+        description: '{{ doc("col_rate_per_round") }}'
+      - name: unlock_action
+        description: '{{ doc("col_unlock_action") }}'
+      - name: unlock_reason
+        description: '{{ doc("col_unlock_reason") }}'
+      - name: tx_kind
+        description: '{{ doc("col_tx_kind") }}'
+      - name: unlock_amulet_price
+        description: 'USD price of amulet at time of unlock'
+      - name: unlock_round_number
+        description: 'Round number when unlock occurred'
+      - name: created_amulet_contract_id
+        description: '{{ doc("col_created_amulet_contract_id") }}'
+      - name: lock_event_id
+        description: 'Event ID of the lock creation event'
+        tests:
+          - not_null
+      - name: unlock_event_id
+        description: 'Event ID of the unlock event (NULL if still locked)'
+      - name: lock_status
+        description: 'Current status: locked, unlocked, or expired'
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['locked', 'unlocked', 'expired']
+      - name: days_locked_before_unlock
+        description: 'Number of days amulet was locked before being unlocked'
+      - name: days_locked_current
+        description: 'Number of days amulet has been locked (for currently locked amulets)'
+      - name: was_unlocked_after_expiry
+        description: 'Boolean indicating if unlock occurred after the lock expiration time'
+      - name: most_recent_activity
+        description: 'Most recent timestamp of activity (unlock if unlocked, otherwise lock time)'
+        tests:
+          - not_null
+      - name: created_at
+        description: '{{ doc("col_created_at") }}'
+      - name: signatories
+        description: '{{ doc("col_signatories") }}'
+      - name: observers
+        description: '{{ doc("col_observers") }}'

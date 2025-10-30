@@ -3,6 +3,8 @@
     unique_key = ['event_id'],
     cluster_by = ['effective_at::DATE'],
     incremental_strategy = 'merge',
+    incremental_predicates = ["dynamic_range_predicate", "effective_at::date"],
+    merge_exclude_columns = ["inserted_timestamp"],
     tags = ['gov', 'non_core']
 ) }}
 
@@ -15,12 +17,13 @@ WITH validator_reward_events AS (
         record_time,
         effective_at,
         event_id,
-        event_json,
-        _inserted_timestamp
+        event_index,
+        choice,
+        event_json
     FROM
         {{ ref('silver__events') }}
     WHERE
-        event_json:choice::STRING = 'AmuletRules_Transfer'
+        choice = 'AmuletRules_Transfer'
         AND event_json:exercise_result:meta:values['amulet.splice.lfdecentralizedtrust.org/validator-rewards'] IS NOT NULL
 
     {% if is_incremental() %}
@@ -37,6 +40,8 @@ SELECT
     record_time,
     effective_at,
     event_id,
+    event_index,
+    choice,
     event_json:acting_parties AS acting_parties,
 
     -- Transfer context

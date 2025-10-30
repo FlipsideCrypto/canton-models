@@ -1,0 +1,70 @@
+version: 2
+
+models:
+  - name: core__fact_app_reward_coupons
+    description: '{{ doc("core__fact_app_reward_coupons") }}'
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: effective_at
+          interval: 24
+    columns:
+      - name: update_id
+        description: '{{ doc("col_update_id") }}'
+        tests:
+          - not_null
+      - name: migration_id
+        description: '{{ doc("col_migration_id") }}'
+        tests:
+          - not_null
+      - name: record_time
+        description: '{{ doc("col_record_time") }}'
+      - name: effective_at
+        description: '{{ doc("col_effective_at") }}'
+        tests:
+          - not_null
+      - name: event_id
+        description: '{{ doc("col_event_id") }}'
+        tests:
+          - not_null
+      - name: event_index
+        description: '{{ doc("col_event_index") }}'
+        tests:
+          - not_null
+      - name: coupon_amount
+        description: '{{ doc("col_coupon_amount") }}'
+      - name: app_provider
+        description: '{{ doc("col_app_provider") }}'
+      - name: beneficiary
+        description: '{{ doc("col_beneficiary") }}'
+      - name: is_featured_app
+        description: '{{ doc("col_is_featured_app") }}'
+      - name: round_number
+        description: '{{ doc("col_round_number") }}'
+      - name: dso_party
+        description: '{{ doc("col_dso_party") }}'
+      - name: event_type
+        description: '{{ doc("col_event_type") }}'
+      - name: coupon_contract_id
+        description: 'Contract ID for the app reward coupon'
+      - name: package_name
+        description: '{{ doc("col_package_name") }}'
+      - name: template_id
+        description: '{{ doc("col_template_id") }}'
+      - name: created_at
+        description: '{{ doc("col_created_at") }}'
+      - name: signatories
+        description: '{{ doc("col_signatories") }}'
+      - name: observers
+        description: '{{ doc("col_observers") }}'
+      - name: event_json
+        description: '{{ doc("col_event_json") }}'
+      - name: fact_app_reward_coupon_id
+        description: 'Surrogate key generated from event_id'
+        tests:
+          - not_null
+          - unique
+      - name: inserted_timestamp
+        description: '{{ doc("col_inserted_timestamp") }}'
+      - name: modified_timestamp
+        description: '{{ doc("col_modified_timestamp") }}'

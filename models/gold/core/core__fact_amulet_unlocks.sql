@@ -3,7 +3,9 @@
     unique_key = ['event_id'],
     cluster_by = ['effective_at::DATE'],
     incremental_strategy = 'merge',
-    tags = ['core', 'staking']
+    incremental_predicates = ["dynamic_range_predicate", "effective_at::date"],
+    merge_exclude_columns = ["inserted_timestamp"],
+    tags = ['core']
 ) }}
 
 -- Tracks unlocking/unstaking of locked amulets
@@ -15,13 +17,14 @@ WITH unlock_events AS (
         record_time,
         effective_at,
         event_id,
+        event_index,
+        choice,
         event_json,
-        is_root_event,
-        _inserted_timestamp
+        is_root_event
     FROM
         {{ ref('silver__events') }}
     WHERE
-        event_json:choice::STRING IN (
+        choice IN (
             'LockedAmulet_OwnerExpireLock',
             'LockedAmulet_Unlock'
         )
@@ -41,8 +44,8 @@ child_amulet_events AS (
         record_time,
         effective_at,
         event_id,
-        event_json,
-        _inserted_timestamp
+        event_index,
+        event_json
     FROM
         {{ ref('silver__events') }}
     WHERE
@@ -64,13 +67,14 @@ SELECT
     a.record_time,
     a.effective_at,
     a.event_id,
-    a.event_json:choice::STRING AS choice,
+    a.event_index,
+    a.choice,
     a.event_json:acting_parties AS acting_parties,
 
     -- Derived unlock action
     CASE
-        WHEN a.event_json:choice::STRING = 'LockedAmulet_Unlock' THEN 'unlock'
-        WHEN a.event_json:choice::STRING = 'LockedAmulet_OwnerExpireLock' THEN 'expire_lock'
+        WHEN a.choice = 'LockedAmulet_Unlock' THEN 'unlock'
+        WHEN a.choice = 'LockedAmulet_OwnerExpireLock' THEN 'expire_lock'
     END AS unlock_action,
 
     -- Choice arguments
@@ -97,8 +101,7 @@ SELECT
     b.event_json:contract_id::STRING AS created_amulet_contract_id,
 
     -- Metadata
-    {{ dbt_utils.generate_surrogate_key(['a.event_id']) }} AS fact_unlock_id,
-    a._inserted_timestamp,
+    {{ dbt_utils.generate_surrogate_key(['a.event_id']) }} AS fact_amulet_unlocks_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp
 FROM

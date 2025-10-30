@@ -1,9 +1,11 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['effective_at', 'migration_id', 'event_id'],
-    cluster_by = ['effective_at::DATE', 'migration_id'],
+    unique_key = ['event_id'],
+    cluster_by = ['effective_at::DATE'],
     incremental_strategy = 'merge',
-    tags = ['gov']
+    incremental_predicates = ["dynamic_range_predicate", "effective_at::date"],
+    merge_exclude_columns = ["inserted_timestamp"],
+    tags = ['gov','non_core']
 ) }}
 
 WITH validator_activity_events AS (
@@ -13,15 +15,15 @@ WITH validator_activity_events AS (
         record_time,
         effective_at,
         event_id,
-        event_json,
-        _inserted_timestamp
+        event_index,
+        choice,
+        event_json
     FROM
         {{ ref('silver__events') }}
     WHERE
-        event_json:choice::STRING IN (
-            'ValidatorLicense_ReportActive',
-            'ValidatorLicense_RecordValidatorLivenessActivity',
-            'ValidatorLivenessActivityRecord_DsoExpire'
+        choice IN (
+            'ValidatorLicense_ReportActive', --sv
+            'ValidatorLicense_RecordValidatorLivenessActivity' --normal
         )
 
     {% if is_incremental() %}
@@ -38,34 +40,25 @@ SELECT
     record_time,
     effective_at,
     event_id,
-    event_json:choice::STRING AS choice,
-    event_json:acting_parties AS acting_parties,
-
-    -- Derived activity type
-    CASE
-        WHEN event_json:choice::STRING = 'ValidatorLicense_ReportActive' THEN 'report_active'
-        WHEN event_json:choice::STRING = 'ValidatorLicense_RecordValidatorLivenessActivity' THEN 'record_activity'
-        WHEN event_json:choice::STRING = 'ValidatorLivenessActivityRecord_DsoExpire' THEN 'activity_expired'
-    END AS activity_type,
+    event_index,
+    choice,
+    event_json:acting_parties[0] AS validator_party,
+    case when choice = 'ValidatorLicense_ReportActive'  then 'super_validator' else 'validator' end as validator_type,
 
     -- Choice arguments
-    event_json:choice_argument AS choice_argument,
+    event_json:choice_argument:openRoundCid::STRING AS open_round_cid,
     event_json:choice_argument:closedRoundCid::STRING AS closed_round_cid,
 
     -- Exercise results
-    event_json:exercise_result AS exercise_result,
-    event_json:exercise_result:livenessRecordCid::STRING AS liveness_record_cid,
+    event_json:exercise_result:couponCid::STRING AS coupon_cid,
+    event_json:exercise_result:licenseCid::STRING AS license_cid,
 
     -- Contract details
-    event_json:event_type::STRING AS event_type,
     event_json:contract_id::STRING AS contract_id,
-    event_json:package_name::STRING AS package_name,
     event_json:template_id::STRING AS template_id,
-    event_json:consuming::BOOLEAN AS consuming,
-
+event_json,
     -- Metadata
     {{ dbt_utils.generate_surrogate_key(['event_id']) }} AS fact_validator_activity_id,
-    _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp
 FROM

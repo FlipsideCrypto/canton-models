@@ -1,0 +1,107 @@
+version: 2
+
+models:
+  - name: gov__fact_vote_results
+    description: '{{ doc("gov__fact_vote_results") }}'
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: effective_at
+          interval: 48
+    columns:
+      - name: update_id
+        description: '{{ doc("col_update_id") }}'
+        tests:
+          - not_null
+      - name: migration_id
+        description: '{{ doc("col_migration_id") }}'
+        tests:
+          - not_null
+      - name: record_time
+        description: '{{ doc("col_record_time") }}'
+      - name: effective_at
+        description: '{{ doc("col_effective_at") }}'
+        tests:
+          - not_null
+      - name: event_id
+        description: '{{ doc("col_event_id") }}'
+        tests:
+          - not_null
+          - unique
+      - name: event_index
+        description: '{{ doc("col_event_index") }}'
+        tests:
+          - not_null
+      - name: choice
+        description: '{{ doc("col_choice") }}'
+      - name: acting_parties
+        description: '{{ doc("col_acting_parties") }}'
+      - name: request_cid
+        description: '{{ doc("col_request_cid") }}'
+        tests:
+          - not_null
+      - name: amulet_rules_cid
+        description: '{{ doc("col_amulet_rules_cid") }}'
+      - name: closing_sv
+        description: '{{ doc("col_closing_sv") }}'
+      - name: outcome
+        description: '{{ doc("col_outcome") }}'
+        tests:
+          - not_null
+      - name: outcome_effective_at
+        description: '{{ doc("col_outcome_effective_at") }}'
+      - name: completed_at
+        description: '{{ doc("col_completed_at") }}'
+      - name: accepted_svs
+        description: '{{ doc("col_accepted_svs") }}'
+      - name: rejected_svs
+        description: '{{ doc("col_rejected_svs") }}'
+      - name: abstaining_svs
+        description: '{{ doc("col_abstaining_svs") }}'
+      - name: offboarded_voters
+        description: '{{ doc("col_offboarded_voters") }}'
+      - name: tracking_cid
+        description: '{{ doc("col_tracking_cid") }}'
+      - name: requester
+        description: '{{ doc("col_requester") }}'
+      - name: target_effective_at
+        description: '{{ doc("col_target_effective_at") }}'
+      - name: vote_before
+        description: '{{ doc("col_vote_before") }}'
+      - name: action
+        description: '{{ doc("col_action") }}'
+      - name: dso_action
+        description: '{{ doc("col_dso_action") }}'
+      - name: amulet_rules_action
+        description: '{{ doc("col_amulet_rules_action") }}'
+      - name: dso_action_value
+        description: '{{ doc("col_dso_action_value") }}'
+      - name: amulet_rules_value
+        description: '{{ doc("col_amulet_rules_value") }}'
+      - name: reason_body
+        description: '{{ doc("col_reason_body") }}'
+      - name: reason_url
+        description: '{{ doc("col_reason_url") }}'
+      - name: total_votes_cast
+        description: '{{ doc("col_total_votes_cast") }}'
+      - name: abstaining_count
+        description: '{{ doc("col_abstaining_count") }}'
+      - name: offboarded_count
+        description: '{{ doc("col_offboarded_count") }}'
+      - name: accept_votes
+        description: '{{ doc("col_accept_votes") }}'
+      - name: reject_votes
+        description: '{{ doc("col_reject_votes") }}'
+      - name: contract_id
+        description: '{{ doc("col_contract_id") }}'
+      - name: fact_vote_result_id
+        description: 'Surrogate key generated from event_id'
+        tests:
+          - not_null
+          - unique
+      - name: inserted_timestamp
+        description: '{{ doc("col_inserted_timestamp") }}'
+      - name: modified_timestamp
+        description: '{{ doc("col_modified_timestamp") }}'
+      - name: event_json
+        description: '{{ doc("col_event_json") }}'

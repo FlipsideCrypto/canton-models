@@ -17,12 +17,13 @@ WITH vote_result_events AS (
         record_time,
         effective_at,
         event_id,
-        event_json,
-        _inserted_timestamp
+        event_index,
+        choice,
+        event_json
     FROM
         {{ ref('silver__events') }}
     WHERE
-        event_json:choice::STRING = 'DsoRules_CloseVoteRequest'
+        choice = 'DsoRules_CloseVoteRequest'
 
     {% if is_incremental() %}
     AND modified_timestamp >= (
@@ -38,7 +39,8 @@ SELECT
     record_time,
     effective_at,
     event_id,
-    event_json:choice::STRING AS choice,
+    event_index,
+    choice,
     event_json:acting_parties AS acting_parties,
 
     -- Choice arguments
@@ -122,5 +124,7 @@ GROUP BY
     record_time,
     effective_at,
     event_id,
+    event_index,
+    choice,
     event_json
  

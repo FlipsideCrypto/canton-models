@@ -1,8 +1,10 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['effective_at', 'migration_id', 'event_id'],
-    cluster_by = ['effective_at::DATE', 'migration_id'],
+    unique_key = ['event_id'],
+    cluster_by = ['effective_at::DATE'],
     incremental_strategy = 'merge',
+    incremental_predicates = ["dynamic_range_predicate", "effective_at::date"],
+    merge_exclude_columns = ["inserted_timestamp"],
     tags = ['core']
 ) }}
 
@@ -13,12 +15,13 @@ WITH transfer_events AS (
         record_time,
         effective_at,
         event_id,
-        event_json,
-        _inserted_timestamp
+        event_index,
+        choice,
+        event_json
     FROM
         {{ ref('silver__events') }}
     WHERE
-        event_json:choice::STRING IN (
+        choice IN (
             'AmuletRules_Transfer',
             'TransferCommand_Send',
             'TransferFactory_Transfer',
@@ -39,7 +42,8 @@ SELECT
     record_time,
     effective_at,
     event_id,
-    event_json:choice::STRING AS choice,
+    event_index,
+    choice,
     event_json:acting_parties AS acting_parties,
 
     -- Choice arguments (extracted from various nested levels depending on choice)
@@ -93,7 +97,6 @@ SELECT
 
     -- Metadata
     {{ dbt_utils.generate_surrogate_key(['event_id']) }} AS fact_transfer_id,
-    _inserted_timestamp,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp
 FROM

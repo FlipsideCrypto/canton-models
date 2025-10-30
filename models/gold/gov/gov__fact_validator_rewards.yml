@@ -1,0 +1,69 @@
+version: 2
+
+models:
+  - name: gov__fact_validator_rewards
+    description: '{{ doc("gov__fact_validator_rewards") }}'
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: effective_at
+          interval: 24
+    columns:
+      - name: update_id
+        description: '{{ doc("col_update_id") }}'
+        tests:
+          - not_null
+      - name: migration_id
+        description: '{{ doc("col_migration_id") }}'
+      - name: record_time
+        description: '{{ doc("col_record_time") }}'
+      - name: effective_at
+        description: '{{ doc("col_effective_at") }}'
+        tests:
+          - not_null
+      - name: event_id
+        description: '{{ doc("col_event_id") }}'
+        tests:
+          - not_null
+          - unique
+      - name: event_index
+        description: '{{ doc("col_event_index") }}'
+        tests:
+          - not_null
+      - name: choice
+        description: '{{ doc("col_choice") }}'
+      - name: acting_parties
+        description: '{{ doc("col_acting_parties") }}'
+      - name: validator_rights
+        description: '{{ doc("col_validator_rights") }}'
+      - name: issuing_mining_rounds
+        description: '{{ doc("col_issuing_mining_rounds") }}'
+      - name: mining_round
+        description: '{{ doc("col_mining_round") }}'
+      - name: validator_party
+        description: '{{ doc("col_validator_party") }}'
+      - name: exercise_result
+        description: '{{ doc("col_exercise_result") }}'
+      - name: reward_amount
+        description: '{{ doc("col_reward_amount") }}'
+      - name: burned_amount
+        description: '{{ doc("col_burned_amount") }}'
+      - name: net_reward_amount
+        description: '{{ doc("col_net_reward_amount") }}'
+      - name: all_meta_values
+        description: '{{ doc("col_all_meta_values") }}'
+      - name: transfer_summary
+        description: '{{ doc("col_transfer_summary") }}'
+      - name: round_number
+        description: '{{ doc("col_round_number") }}'
+      - name: contract_id
+        description: '{{ doc("col_contract_id") }}'
+      - name: fact_validator_reward_id
+        description: 'Surrogate key generated from event_id'
+        tests:
+          - not_null
+          - unique
+      - name: inserted_timestamp
+        description: '{{ doc("col_inserted_timestamp") }}'
+      - name: modified_timestamp
+        description: '{{ doc("col_modified_timestamp") }}'
