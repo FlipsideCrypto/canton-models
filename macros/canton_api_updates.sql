@@ -22,7 +22,7 @@ SELECT
                 {{ after_record_time }}
             ),
             'page_size',
-            500,
+            250,
             'daml_value_encoding',
             'compact_json'
         ),
