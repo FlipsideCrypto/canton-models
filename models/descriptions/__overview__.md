@@ -3,7 +3,7 @@
 # Welcome to the Flipside Crypto CANTON Models Documentation
 
 ## **What does this documentation cover?**
-The documentation included here details the design of the CANTON blockchain tables and views available via [Flipside Crypto.](https://flipsidecrypto.xyz/) For more information on how these models are built, please see [the github repository.](https://github.com/flipsideCrypto/sui-models/)
+The documentation included here details the design of the CANTON blockchain tables and views available via [Flipside Crypto.](https://flipsidecrypto.xyz/) For more information on how these models are built, please see [the github repository.](https://github.com/FlipsideCrypto/canton-models)
 
 ## **How do I use these docs?**
 The easiest way to navigate this documentation is to use the Quick Links below. These links will take you to the documentation for each table, which contains a description, a list of the columns, and other helpful information.
@@ -63,11 +63,9 @@ The CANTON models are built using three layers of SQL models: **bronze, silver, 
 
 - Bronze: Data is loaded in from the source as a view
 - Silver: All necessary parsing, filtering, de-duping, and other transformations are done here
-- Gold (or core/defi/nft): Final views and tables that are available publicly
+- Gold (core/gov): Final views and tables that are available publicly
 
-The dimension tables are sourced from a variety of on-chain and off-chain sources.
-
-Convenience views (denoted ez_) are a combination of different fact and dimension tables. These views are built to make it easier to query the data.
+Convenience views (denoted ez_) are a combination of different fact tables. These views are built to make it easier to query the data by providing complete lifecycle tracking and pre-joined relationships.
 
 ## **Using dbt docs**
 ### Navigation
@@ -90,74 +88,80 @@ Note that you can also right-click on models to interactively filter and explore
 
 ### **More information**
 - [Flipside](https://flipsidecrypto.xyz/)
-- [Github](https://github.com/FlipsideCrypto/sui-models)
+- [Github](https://github.com/FlipsideCrypto/canton-models)
 - [What is dbt?](https://docs.getdbt.com/docs/introduction)
+- [Canton Network](https://www.canton.network/)
 
 <llm>
 <blockchain>Canton</blockchain>
 <aliases>CANTON, Canton Network</aliases>
-<ecosystem>Layer 1, Object-Centric Parallel Execution</ecosystem>
-<description>Canton is a high-performance Layer 1 blockchain designed for instant settlement and infinite scalability. Built on the Move programming language with an object-centric data model, Canton enables parallel execution of transactions that don't conflict, achieving unprecedented throughput and low latency. The blockchain uses the Mysticeti consensus mechanism and supports both exclusive objects (owned by single addresses) and shared objects (accessible by multiple users). Canton was specifically designed for high-volume decentralized applications including gaming, NFTs, and DeFi, offering developers a secure and scalable platform for building next-generation Web3 applications.</description>
+<ecosystem>Privacy-Enabled Blockchain Network, Decentralized Synchronization</ecosystem>
+<description>Canton is a privacy-enabled blockchain network designed for institutional and enterprise financial applications. Built by Digital Asset, Canton uses the Daml smart contract language and implements a unique synchronization protocol that enables confidential, interoperable transactions across multiple network participants. The network supports both public and private data domains, allowing participants to maintain data privacy while still achieving settlement finality. Canton's architecture is built around "updates" (atomic transactions) that contain one or more "events" (contract creations and exercises). The network includes a Digital Super Organization (DSO) that governs the network through decentralized voting, manages validator onboarding/offboarding, and controls the Amulet native token economics including mining rounds, rewards, and transfer operations.</description>
 <external_resources>
-    <block_scanner>https://suiexplorer.com/</block_scanner>
-    <developer_documentation>https://docs.sui.io/</developer_documentation>
+    <block_scanner>https://explorer.canton.network/</block_scanner>
+    <developer_documentation>https://docs.canton.network/</developer_documentation>
+    <main_website>https://www.canton.network/</main_website>
 </external_resources>
 <expert>
   <constraints>
     <table_availability>
-      Ensure that your queries use only available tables for Canton blockchain. The gold layer contains core fact and dimension tables, plus curated DeFi models. Use the quick links above to navigate to specific table documentation.
+      Ensure that your queries use only available tables for Canton blockchain. The gold layer contains core tables (transfers, balance changes, amulet locks/unlocks, mining rounds, app rewards) and governance tables (validator lifecycle, voting, rewards). Use the quick links above to navigate to specific table documentation.
     </table_availability>
-    
+
     <schema_structure>
-      Understand that the database follows a bronze/silver/gold layering pattern. Bronze models contain raw data, silver models apply transformations and filtering, and gold models provide analytics-ready data. The gold layer includes core tables (fact_ and dim_ tables) and curated models (ez_ tables) that combine multiple sources with business logic.
+      Understand that the database follows a bronze/silver/gold layering pattern. Bronze models contain raw API data from Canton nodes, silver models parse JSON and flatten events, and gold models provide analytics-ready fact tables. The gold layer includes core tables (transaction/transfer data) and governance tables (validator and voting data), plus ez_ tables that provide lifecycle views.
     </schema_structure>
   </constraints>
 
   <optimization>
     <performance_filters>
-      Use filters like block_timestamp over the last N days to improve query performance. For DeFi analysis, consider filtering by specific platforms or token pairs to reduce data volume.
+      Use filters like effective_at over the last N days to improve query performance. Most tables are clustered by effective_at::DATE for efficient time-based queries. For party-specific analysis, filter by party, validator_party, sender, or receiver fields.
     </performance_filters>
-    
+
     <query_structure>
-      Use CTEs for complex queries to improve readability and maintainability. Leverage the object-centric nature of Canton data by joining on object IDs and transaction digests for efficient lookups.
+      Use CTEs for complex queries to improve readability and maintainability. Join tables on event_id, update_id, contract_id, or round_number for efficient lookups. Use the ez_ lifecycle views for simplified analysis across multiple related events.
     </query_structure>
-    
+
     <implementation_guidance>
-      Be smart with aggregations and window functions when analyzing high-throughput Canton data. Consider the parallel execution model when analyzing transaction patterns and dependencies.
+      Be aware of Canton's event model: updates contain events, events have parent-child relationships via root_event_ids and child_event_ids. Use effective_at for temporal queries, event_id for unique event identification, and contract_id for tracking contract lifecycle.
     </implementation_guidance>
   </optimization>
 
   <domain_mapping>
     <token_operations>
-      For token transfers and balance changes, use core__fact_balance_changes and core__fact_changes tables. For comprehensive DeFi swap analysis, use defi__ez_dex_swaps which includes pricing and USD valuations.
+      For amulet transfers, use core__fact_transfers. For balance changes resulting from transfers, use core__fact_balance_changes. For locked/staked amulets, use core__fact_amulet_locks, core__fact_amulet_unlocks, or core__ez_amulet_lock_lifecycle for complete lifecycle.
     </token_operations>
-    
-    <defi_analysis>
-      For DeFi analysis, utilize defi__ez_dex_swaps table which covers seven major DEX protocols: Cetus, Turbos, Bluefin, Aftermath AMM, FlowX, DeepBook, and Momentum. This table includes USD pricing, token metadata, and enhanced labeling for comprehensive DeFi analytics.
-    </defi_analysis>
-    
-    <nft_analysis>
-      For NFT analysis, use core__fact_changes table filtered by object types that represent NFTs. Canton's object-centric model makes NFT tracking particularly efficient through object ID lookups.
-    </nft_analysis>
-    
+
+    <governance_analysis>
+      For validator analysis, use gov__fact_validator_onboarding_requests, gov__fact_validator_onboarding_events, gov__fact_validator_offboarding_events, or gov__ez_validator_onboarding_lifecycle for complete lifecycle. For validator activity and rewards, use gov__fact_validator_activity and gov__fact_validator_rewards.
+    </governance_analysis>
+
+    <voting_analysis>
+      For DSO governance voting, use gov__fact_vote_requests (proposals), gov__fact_votes (individual votes), and gov__fact_vote_results (outcomes). Vote results include accepted/rejected SV lists and abstentions.
+    </voting_analysis>
+
+    <mining_rounds>
+      For mining round data, use core__fact_round_opens (IssuingMiningRound with issuance rates) and core__fact_round_closes (SummarizingMiningRound with reward caps and amulet price). Round numbers link to app rewards and validator rewards.
+    </mining_rounds>
+
     <specialized_features>
-      Canton's object-centric data model is complex, so ensure you ask clarifying questions when dealing with object relationships and ownership patterns. The parallel execution model means transaction ordering may differ from traditional blockchains.
+      Canton uses a Daml-based contract model with created_events (contract creation) and exercised_events (contract method execution). Events within an update may have parent-child relationships. The DSO governs through voting, validators report activity, and mining rounds drive reward distribution.
     </specialized_features>
   </domain_mapping>
 
   <interaction_modes>
     <direct_user>
-      Ask clarifying questions when dealing with complex Canton data structures, especially around object ownership and transaction dependencies. Provide specific examples using Canton's Move type format and address conventions.
+      Ask clarifying questions when dealing with complex Canton data structures, especially around event relationships, contract lifecycles, and governance processes. Provide specific examples using Canton party IDs, contract IDs, and template IDs.
     </direct_user>
-    
+
     <agent_invocation>
-      When invoked by another AI agent, respond with relevant query text and explain Canton-specific considerations like object-centric data model and parallel execution patterns.
+      When invoked by another AI agent, respond with relevant query text and explain Canton-specific considerations like the update/event model, Daml contract patterns, and DSO governance mechanisms.
     </agent_invocation>
   </interaction_modes>
 
   <engagement>
     <exploration_tone>
-      Have fun exploring the Canton ecosystem through data! The object-centric model and parallel execution make for fascinating analytics patterns that differ from traditional blockchains.
+      Have fun exploring the Canton ecosystem through data! The privacy-enabled architecture, DSO governance model, and mining round economics make for fascinating analytics patterns unique to Canton Network.
     </exploration_tone>
   </engagement>
 </expert>
