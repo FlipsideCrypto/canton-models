@@ -1,0 +1,88 @@
+version: 2
+
+models:
+  - name: core__fact_transfers
+    description: '{{ doc("core__fact_transfers") }}'
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: effective_at
+          interval: 24
+    columns:
+      - name: update_id
+        description: '{{ doc("col_update_id") }}'
+        tests:
+          - not_null
+      - name: migration_id
+        description: '{{ doc("col_migration_id") }}'
+      - name: record_time
+        description: '{{ doc("col_record_time") }}'
+      - name: effective_at
+        description: '{{ doc("col_effective_at") }}'
+        tests:
+          - not_null
+      - name: event_id
+        description: '{{ doc("col_event_id") }}'
+        tests:
+          - not_null
+      - name: event_index
+        description: '{{ doc("col_event_index") }}'
+        tests:
+          - not_null
+      - name: choice
+        description: '{{ doc("col_choice") }}'
+        tests:
+          - not_null
+      - name: acting_parties
+        description: '{{ doc("col_acting_parties") }}'
+      - name: amount
+        description: '{{ doc("col_amount") }}'
+      - name: sender
+        description: '{{ doc("col_sender") }}'
+      - name: receiver
+        description: '{{ doc("col_receiver") }}'
+      - name: provider
+        description: '{{ doc("col_provider") }}'
+      - name: delegate
+        description: '{{ doc("col_delegate") }}'
+      - name: description
+        description: '{{ doc("col_description") }}'
+      - name: nonce
+        description: '{{ doc("col_nonce") }}'
+      - name: expires_at
+        description: '{{ doc("col_expires_at") }}'
+      - name: expected_dso
+        description: '{{ doc("col_expected_dso") }}'
+      - name: context
+        description: '{{ doc("col_context") }}'
+      - name: transfer_object
+        description: '{{ doc("col_transfer_object") }}'
+      - name: transfer_command_cid
+        description: '{{ doc("col_transfer_command_cid") }}'
+      - name: transfer_preapproval_cid
+        description: '{{ doc("col_transfer_preapproval_cid") }}'
+      - name: amulet_amount
+        description: '{{ doc("col_amulet_amount") }}'
+      - name: transfer_summary
+        description: '{{ doc("col_transfer_summary") }}'
+      - name: transfer_meta
+        description: '{{ doc("col_transfer_meta") }}'
+      - name: event_type
+        description: '{{ doc("col_event_type") }}'
+      - name: contract_id
+        description: '{{ doc("col_contract_id") }}'
+      - name: package_name
+        description: '{{ doc("col_package_name") }}'
+      - name: template_id
+        description: '{{ doc("col_template_id") }}'
+      - name: consuming
+        description: '{{ doc("col_consuming") }}'
+      - name: fact_transfer_id
+        description: 'Surrogate key generated from event_id'
+        tests:
+          - not_null
+          - unique
+      - name: inserted_timestamp
+        description: '{{ doc("col_inserted_timestamp") }}'
+      - name: modified_timestamp
+        description: '{{ doc("col_modified_timestamp") }}'

@@ -1,0 +1,56 @@
+version: 2
+
+models:
+  - name: core__fact_app_rewards
+    description: '{{ doc("core__fact_app_rewards") }}'
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: effective_at
+          interval: 24
+    columns:
+      - name: update_id
+        description: '{{ doc("col_update_id") }}'
+        tests:
+          - not_null
+      - name: migration_id
+        description: '{{ doc("col_migration_id") }}'
+        tests:
+          - not_null
+      - name: record_time
+        description: '{{ doc("col_record_time") }}'
+      - name: effective_at
+        description: '{{ doc("col_effective_at") }}'
+        tests:
+          - not_null
+      - name: event_id
+        description: '{{ doc("col_event_id") }}'
+        tests:
+          - not_null
+      - name: event_index
+        description: '{{ doc("col_event_index") }}'
+        tests:
+          - not_null
+      - name: choice
+        description: '{{ doc("col_choice") }}'
+      - name: acting_parties
+        description: '{{ doc("col_acting_parties") }}'
+      - name: closed_round_cid
+        description: '{{ doc("col_closed_round_cid") }}'
+      - name: reward_amount
+        description: '{{ doc("col_reward_amount") }}'
+      - name: is_featured_app
+        description: '{{ doc("col_is_featured_app") }}'
+      - name: contract_id
+        description: '{{ doc("col_contract_id") }}'
+      - name: template_id
+        description: '{{ doc("col_template_id") }}'
+      - name: fact_app_reward_id
+        description: 'Surrogate key generated from event_id'
+        tests:
+          - not_null
+          - unique
+      - name: inserted_timestamp
+        description: '{{ doc("col_inserted_timestamp") }}'
+      - name: modified_timestamp
+        description: '{{ doc("col_modified_timestamp") }}'

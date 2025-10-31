@@ -1,0 +1,77 @@
+version: 2
+
+models:
+  - name: core__fact_amulet_unlocks
+    description: '{{ doc("core__fact_amulet_unlocks") }}'
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: effective_at
+          interval: 24
+    columns:
+      - name: update_id
+        description: '{{ doc("col_update_id") }}'
+        tests:
+          - not_null
+      - name: migration_id
+        description: '{{ doc("col_migration_id") }}'
+      - name: record_time
+        description: '{{ doc("col_record_time") }}'
+      - name: effective_at
+        description: '{{ doc("col_effective_at") }}'
+        tests:
+          - not_null
+      - name: event_id
+        description: '{{ doc("col_event_id") }}'
+        tests:
+          - not_null
+          - unique
+      - name: event_index
+        description: '{{ doc("col_event_index") }}'
+        tests:
+          - not_null
+      - name: choice
+        description: '{{ doc("col_choice") }}'
+      - name: acting_parties
+        description: '{{ doc("col_acting_parties") }}'
+      - name: unlock_action
+        description: '{{ doc("col_unlock_action") }}'
+      - name: open_round_cid
+        description: '{{ doc("col_open_round_cid") }}'
+      - name: unlocked_amulet_cid
+        description: 'Contract ID of the unlocked amulet from exercise result'
+      - name: amulet_price
+        description: '{{ doc("col_amulet_price") }}'
+      - name: round_number
+        description: '{{ doc("col_round_number") }}'
+      - name: unlock_reason
+        description: '{{ doc("col_unlock_reason") }}'
+      - name: tx_kind
+        description: '{{ doc("col_tx_kind") }}'
+      - name: unlocked_amount
+        description: '{{ doc("col_unlocked_amount") }}'
+      - name: created_at_round
+        description: 'Round when the amulet amount was originally created'
+      - name: rate_per_round
+        description: '{{ doc("col_rate_per_round") }}'
+      - name: owner
+        description: '{{ doc("col_owner") }}'
+      - name: amulet_created_at
+        description: 'Timestamp when the new unlocked amulet was created'
+      - name: event_type
+        description: '{{ doc("col_event_type") }}'
+      - name: locked_amulet_contract_id
+        description: '{{ doc("col_locked_amulet_contract_id") }}'
+      - name: consuming
+        description: '{{ doc("col_consuming") }}'
+      - name: created_amulet_contract_id
+        description: '{{ doc("col_created_amulet_contract_id") }}'
+      - name: fact_amulet_unlocks_id
+        description: 'Surrogate key generated from event_id'
+        tests:
+          - not_null
+          - unique
+      - name: inserted_timestamp
+        description: '{{ doc("col_inserted_timestamp") }}'
+      - name: modified_timestamp
+        description: '{{ doc("col_modified_timestamp") }}'

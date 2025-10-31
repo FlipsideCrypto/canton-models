@@ -1,0 +1,66 @@
+version: 2
+
+models:
+  - name: gov__fact_validator_onboarding_events
+    description: '{{ doc("gov__fact_validator_onboarding_events") }}'
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: effective_at
+          interval: 48
+    columns:
+      - name: update_id
+        description: '{{ doc("col_update_id") }}'
+        tests:
+          - not_null
+      - name: migration_id
+        description: '{{ doc("col_migration_id") }}'
+        tests:
+          - not_null
+      - name: record_time
+        description: '{{ doc("col_record_time") }}'
+      - name: effective_at
+        description: '{{ doc("col_effective_at") }}'
+        tests:
+          - not_null
+      - name: event_id
+        description: '{{ doc("col_event_id") }}'
+        tests:
+          - not_null
+      - name: event_index
+        description: '{{ doc("col_event_index") }}'
+        tests:
+          - not_null
+      - name: choice
+        description: '{{ doc("col_choice") }}'
+        tests:
+          - not_null
+      - name: acting_parties
+        description: '{{ doc("col_acting_parties") }}'
+      - name: onboarding_type
+        description: '{{ doc("col_onboarding_type") }}'
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['validator', 'super_validator']
+      - name: validator_party
+        description: '{{ doc("col_validator_party") }}'
+      - name: validator_name
+        description: '{{ doc("col_validator_name") }}'
+      - name: sv_party
+        description: '{{ doc("col_sv_party") }}'
+      - name: sv_onboarding_confirmed
+        description: '{{ doc("col_sv_onboarding_confirmed") }}'
+      - name: new_dso_rules_contract_id
+        description: '{{ doc("col_new_dso_rules_contract_id") }}'
+      - name: contract_id
+        description: '{{ doc("col_contract_id") }}'
+      - name: fact_validator_onboarding_event_id
+        description: 'Surrogate key generated from event_id'
+        tests:
+          - not_null
+          - unique
+      - name: inserted_timestamp
+        description: '{{ doc("col_inserted_timestamp") }}'
+      - name: modified_timestamp
+        description: '{{ doc("col_modified_timestamp") }}'

@@ -1,0 +1,56 @@
+version: 2
+
+models:
+  - name: core__fact_balance_changes
+    description: '{{ doc("core__fact_balance_changes") }}'
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: effective_at
+          interval: 24
+    columns:
+      - name: update_id
+        description: '{{ doc("col_update_id") }}'
+        tests:
+          - not_null
+      - name: migration_id
+        description: '{{ doc("col_migration_id") }}'
+        tests:
+          - not_null
+      - name: record_time
+        description: '{{ doc("col_record_time") }}'
+      - name: effective_at
+        description: '{{ doc("col_effective_at") }}'
+        tests:
+          - not_null
+      - name: event_id
+        description: '{{ doc("col_event_id") }}'
+        tests:
+          - not_null
+      - name: event_index
+        description: '{{ doc("col_event_index") }}'
+        tests:
+          - not_null
+      - name: choice
+        description: '{{ doc("col_choice") }}'
+      - name: acting_parties
+        description: '{{ doc("col_acting_parties") }}'
+      - name: party
+        description: '{{ doc("col_party") }}'
+        tests:
+          - not_null
+      - name: change_to_holding_fees_rate
+        description: '{{ doc("col_change_to_holding_fees_rate") }}'
+      - name: change_to_initial_amount
+        description: '{{ doc("col_change_to_initial_amount") }}'
+      - name: amulet_price
+        description: '{{ doc("col_amulet_price") }}'
+      - name: fact_balance_change_id
+        description: 'Surrogate key generated from event_id and party'
+        tests:
+          - not_null
+          - unique
+      - name: inserted_timestamp
+        description: '{{ doc("col_inserted_timestamp") }}'
+      - name: modified_timestamp
+        description: '{{ doc("col_modified_timestamp") }}'

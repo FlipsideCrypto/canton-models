@@ -1,0 +1,60 @@
+version: 2
+
+models:
+  - name: gov__ez_validator_onboarding_lifecycle
+    description: '{{ doc("gov__ez_validator_onboarding_lifecycle") }}'
+    config:
+      +where: "most_recent_timestamp::DATE > dateadd(hour, -36, sysdate())"
+    columns:
+      - name: onboarding_request_contract_id
+        description: '{{ doc("col_onboarding_request_contract_id") }}'
+      - name: validator_party
+        description: '{{ doc("col_validator_party") }}'
+      - name: validator_name
+        description: '{{ doc("col_validator_name") }}'
+      - name: validator_type
+        description: 'Type of validator: validator or super_validator'
+      - name: request_created_at
+        description: 'Timestamp when onboarding request was created'
+      - name: request_sponsor
+        description: 'Sponsor party for the onboarding request'
+      - name: request_event_id
+        description: 'Event ID of the onboarding request'
+      - name: onboarded_at
+        description: '{{ doc("col_onboarded_at") }}'
+      - name: contact_point
+        description: 'Contact point for the validator'
+      - name: onboarding_sponsor
+        description: 'Sponsor party at time of onboarding'
+      - name: version
+        description: 'Version information'
+      - name: validator_license
+        description: 'Validator license information'
+      - name: sv_reward_weight
+        description: 'Super validator reward weight'
+      - name: onboarding_event_id
+        description: 'Event ID of the onboarding event'
+      - name: expired_at
+        description: '{{ doc("col_expired_at") }}'
+      - name: expiration_type
+        description: '{{ doc("col_expiration_type") }}'
+      - name: expiration_choice
+        description: 'Choice that triggered the expiration'
+      - name: expiration_event_id
+        description: 'Event ID of the expiration event'
+      - name: offboarded_at
+        description: '{{ doc("col_offboarded_at") }}'
+      - name: offboarding_event_id
+        description: 'Event ID of the offboarding event'
+      - name: validator_status
+        description: 'Current status: active, offboarded, request_expired, request_pending, or unknown'
+      - name: days_from_request_to_onboarding
+        description: 'Number of days between request creation and onboarding completion'
+      - name: days_active_before_offboarding
+        description: 'Number of days validator was active before offboarding'
+      - name: days_active_current
+        description: 'Number of days validator has been active (for currently active validators)'
+      - name: most_recent_timestamp
+        description: '{{ doc("col_most_recent_timestamp") }}'
+      - name: is_current
+        description: '{{ doc("col_is_current") }}'

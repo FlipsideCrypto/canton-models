@@ -1,0 +1,43 @@
+version: 2
+
+models:
+  - name: core__fact_updates
+    description: '{{ doc("core__fact_updates") }}'
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: effective_at
+          interval: 24
+    columns:
+      - name: update_id
+        description: '{{ doc("col_update_id") }}'
+        tests:
+          - not_null
+          - unique
+      - name: migration_id
+        description: '{{ doc("col_migration_id") }}'
+        tests:
+          - not_null
+      - name: record_time
+        description: '{{ doc("col_record_time") }}'
+      - name: effective_at
+        description: '{{ doc("col_effective_at") }}'
+        tests:
+          - not_null
+      - name: synchronizer_id
+        description: '{{ doc("col_synchronizer_id") }}'
+      - name: workflow_id
+        description: '{{ doc("col_workflow_id") }}'
+      - name: root_event_ids
+        description: '{{ doc("col_root_event_ids") }}'
+      - name: event_count
+        description: '{{ doc("col_event_count") }}'
+      - name: fact_update_id
+        description: 'Surrogate key generated from update_id'
+        tests:
+          - not_null
+          - unique
+      - name: inserted_timestamp
+        description: '{{ doc("col_inserted_timestamp") }}'
+      - name: modified_timestamp
+        description: '{{ doc("col_modified_timestamp") }}'

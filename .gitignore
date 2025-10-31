@@ -28,3 +28,4 @@ package-lock.yml
 .claude/settings.local.json
 .claude/log
 CLAUDE.local.md
+CLAUDE.md
