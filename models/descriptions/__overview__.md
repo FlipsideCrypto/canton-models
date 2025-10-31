@@ -16,14 +16,50 @@ There is more information on how to use dbt docs in the last section of this doc
 
 **Click on the links below to jump to the documentation for each schema.**
 
-### Core Tables
-**Dimension Tables:**
- 
+### Core Schema
 
-**Fact Tables:**
- 
+**Event & Transaction Tables:**
+- [core__fact_events](#!/model/model.canton_models.core__fact_events) - All Canton events with pre-extracted fields
+- [core__fact_updates](#!/model/model.canton_models.core__fact_updates) - Update-level transaction information
 
-The CANTON models are built using three layers of SQL models: **bronze, silver, and gold (or core/defi/nft).**
+**Transfer & Balance Tables:**
+- [core__fact_transfers](#!/model/model.canton_models.core__fact_transfers) - All amulet transfer operations
+- [core__fact_balance_changes](#!/model/model.canton_models.core__fact_balance_changes) - Balance changes from transfers
+
+**Amulet Lock/Stake Tables:**
+- [core__fact_amulet_locks](#!/model/model.canton_models.core__fact_amulet_locks) - Amulet locking/staking events
+- [core__fact_amulet_unlocks](#!/model/model.canton_models.core__fact_amulet_unlocks) - Amulet unlocking/unstaking events
+- [core__ez_amulet_lock_lifecycle](#!/model/model.canton_models.core__ez_amulet_lock_lifecycle) - Complete lock lifecycle view
+
+**Reward Tables:**
+- [core__fact_app_reward_coupons](#!/model/model.canton_models.core__fact_app_reward_coupons) - App reward coupon creation
+- [core__fact_app_rewards](#!/model/model.canton_models.core__fact_app_rewards) - App reward coupon expirations
+
+**Mining Round Tables:**
+- [core__fact_round_opens](#!/model/model.canton_models.core__fact_round_opens) - Mining round opening events
+- [core__fact_round_closes](#!/model/model.canton_models.core__fact_round_closes) - Mining round closing events
+
+### Governance Schema
+
+**Validator Lifecycle Tables:**
+- [gov__fact_validator_onboarding_requests](#!/model/model.canton_models.gov__fact_validator_onboarding_requests) - Validator onboarding requests
+- [gov__fact_validator_onboarding_events](#!/model/model.canton_models.gov__fact_validator_onboarding_events) - Successful validator onboardings
+- [gov__fact_validator_offboarding_events](#!/model/model.canton_models.gov__fact_validator_offboarding_events) - Validator offboarding events
+- [gov__fact_validator_onboarding_request_expirations](#!/model/model.canton_models.gov__fact_validator_onboarding_request_expirations) - Expired onboarding requests
+- [gov__ez_validator_onboarding_lifecycle](#!/model/model.canton_models.gov__ez_validator_onboarding_lifecycle) - Complete validator lifecycle view
+
+**Validator Activity & Rewards:**
+- [gov__fact_validator_activity](#!/model/model.canton_models.gov__fact_validator_activity) - Validator liveness and activity reporting
+- [gov__fact_validator_rewards](#!/model/model.canton_models.gov__fact_validator_rewards) - Validator reward claims
+
+**Voting & Governance Tables:**
+- [gov__fact_vote_requests](#!/model/model.canton_models.gov__fact_vote_requests) - DSO governance vote proposals
+- [gov__fact_votes](#!/model/model.canton_models.gov__fact_votes) - Individual vote casting events
+- [gov__fact_vote_results](#!/model/model.canton_models.gov__fact_vote_results) - Final vote outcomes and tallies
+
+---
+
+The CANTON models are built using three layers of SQL models: **bronze, silver, and gold (core/gov).**
 
 - Bronze: Data is loaded in from the source as a view
 - Silver: All necessary parsing, filtering, de-duping, and other transformations are done here
