@@ -3,11 +3,6 @@
     tags = ['gov', 'non_core']
 ) }}
 
-{{ config(
-    tests={
-        "where": "most_recent_timestamp::DATE > dateadd(hour, -{{ var('TEST_HOURS_THRESHOLD', 36) }}, sysdate())"
-    }
-) }}
 
 WITH requests AS (
     SELECT
@@ -162,7 +157,7 @@ combined AS (
             COALESCE(b.onboarded_at, '1900-01-01'::TIMESTAMP_NTZ),
             COALESCE(e.expired_at, '1900-01-01'::TIMESTAMP_NTZ),
             COALESCE(o.offboarded_at, '1900-01-01'::TIMESTAMP_NTZ)
-        ) AS most_recent_timestamp
+        ) AS most_recent_timestamp,
         b.inserted_timestamp,
         b.modified_timestamp
     FROM
