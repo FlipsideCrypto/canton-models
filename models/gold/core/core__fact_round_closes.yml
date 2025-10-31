@@ -34,6 +34,8 @@ models:
         tests:
           - not_null
           - unique
+          - dbt_utils.sequential_values:
+              interval: 1
       - name: amulet_to_issue_per_year
         description: '{{ doc("col_amulet_to_issue_per_year") }}'
       - name: validator_reward_percentage

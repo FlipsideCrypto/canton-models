@@ -23,7 +23,9 @@ WITH requests AS (
         ROW_NUMBER() OVER (
             PARTITION BY candidate_party
             ORDER BY effective_at ASC
-        ) AS request_index
+        ) AS request_index,
+        inserted_timestamp,
+        modified_timestamp
     FROM
         {{ ref('gov__fact_validator_onboarding_requests') }}
 ),
@@ -43,7 +45,9 @@ onboarding_events AS (
         sv_participant_id,
         sv_reward_weight,
         event_id AS onboarding_event_id,
-        contract_id
+        contract_id,
+        inserted_timestamp,
+        modified_timestamp
     FROM
         {{ ref('gov__fact_validator_onboarding_events') }}
 ),
@@ -69,7 +73,10 @@ base AS (
         onb.sv_name,
         onb.sv_participant_id,
         onb.sv_reward_weight,
-        onb.onboarding_event_id
+        onb.onboarding_event_id,
+        greatest(r.inserted_timestamp,onb.inserted_timestamp) AS inserted_timestamp,
+        greatest(r.modified_timestamp,onb.modified_timestamp) AS modified_timestamp
+        
     FROM
         requests r
         FULL OUTER JOIN onboarding_events onb ON r.candidate_party = onb.validator_party and r.contract_id = onb.contract_id
@@ -156,6 +163,8 @@ combined AS (
             COALESCE(e.expired_at, '1900-01-01'::TIMESTAMP_NTZ),
             COALESCE(o.offboarded_at, '1900-01-01'::TIMESTAMP_NTZ)
         ) AS most_recent_timestamp
+        b.inserted_timestamp,
+        b.modified_timestamp
     FROM
         base b
         LEFT JOIN expirations e ON e.onboarding_request_contract_id = b.onboarding_request_contract_id
@@ -171,6 +180,7 @@ SELECT
             PARTITION BY validator_party, validator_name
         ) THEN TRUE
         ELSE FALSE
-    END AS is_current
+    END AS is_current,
+    {{ dbt_utils.generate_surrogate_key(['validator_party']) }} AS ez_validator_onboarding_lifecycle_id
 FROM
     combined

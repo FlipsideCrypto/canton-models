@@ -22,6 +22,7 @@ WITH open_round_created_events AS (
         {{ ref('silver__events') }}
     WHERE
         event_json :template_id :: STRING LIKE '%IssuingMiningRound'
+        and    event_json :event_type  = 'created_event'
 
 {% if is_incremental() %}
 AND modified_timestamp >= (
@@ -53,9 +54,7 @@ SELECT
     -- DSO party
     event_json :create_arguments :dso :: STRING AS dso_party,
     -- Contract details
-    event_json :event_type :: STRING AS event_type,
     event_json :contract_id :: STRING AS contract_id,
-    event_json :package_name :: STRING AS package_name,
     event_json :template_id :: STRING AS template_id,
     event_json :created_at :: TIMESTAMP_NTZ AS created_at,
     -- Signatories and observers

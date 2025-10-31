@@ -16,7 +16,9 @@ WITH locks AS (
         locked_amulet_contract_id,
         created_at,
         signatories,
-        observers
+        observers,
+        inserted_timestamp,
+        modified_timestamp
     FROM
         {{ ref('core__fact_amulet_locks') }}
 ),
@@ -32,7 +34,9 @@ unlocks AS (
         round_number AS unlock_round_number,
         unlock_reason,
         tx_kind,
-        created_amulet_contract_id
+        created_amulet_contract_id,
+        inserted_timestamp,
+        modified_timestamp
     FROM
         {{ ref('core__fact_amulet_unlocks') }}
 )
@@ -95,7 +99,10 @@ SELECT
     -- Contract metadata
     l.created_at,
     l.signatories,
-    l.observers
+    l.observers,
+    {{ dbt_utils.generate_surrogate_key(['l.lock_event_id']) }} AS ez_amulet_lock_lifecycle_id,
+    GREATEST(l.inserted_timestamp,u.inserted_timestamp) AS inserted_timestamp,
+    GREATEST(l.modified_timestamp,u.modified_timestamp) AS modified_timestamp
 FROM
     locks l
     LEFT JOIN unlocks u ON l.locked_amulet_contract_id = u.locked_amulet_contract_id

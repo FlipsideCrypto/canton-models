@@ -33,6 +33,11 @@ models:
           - not_null
       - name: round_number
         description: '{{ doc("col_round_number") }}'
+        tests:
+          - not_null
+          - unique
+          - dbt_utils.sequential_values:
+              interval: 1
       - name: opens_at
         description: '{{ doc("col_opens_at") }}'
       - name: target_closes_at
