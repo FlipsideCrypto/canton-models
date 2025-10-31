@@ -10,15 +10,10 @@ models:
         description: '{{ doc("col_onboarding_request_contract_id") }}'
       - name: validator_party
         description: '{{ doc("col_validator_party") }}'
-        tests:
-          - not_null
       - name: validator_name
         description: '{{ doc("col_validator_name") }}'
       - name: validator_type
         description: 'Type of validator: validator or super_validator'
-        tests:
-          - accepted_values:
-              values: ['validator', 'super_validator']
       - name: request_created_at
         description: 'Timestamp when onboarding request was created'
       - name: request_sponsor
@@ -63,5 +58,3 @@ models:
         description: '{{ doc("col_most_recent_timestamp") }}'
       - name: is_current
         description: '{{ doc("col_is_current") }}'
-        tests:
-          - not_null

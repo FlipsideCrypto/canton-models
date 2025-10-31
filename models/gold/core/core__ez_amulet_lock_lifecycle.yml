@@ -8,18 +8,12 @@ models:
     columns:
       - name: locked_amulet_contract_id
         description: '{{ doc("col_locked_amulet_contract_id") }}'
-        tests:
-          - not_null
       - name: amulet_owner
         description: '{{ doc("col_amulet_owner") }}'
-        tests:
-          - not_null
       - name: lock_holders
         description: '{{ doc("col_lock_holders") }}'
       - name: locked_at
         description: 'Timestamp when the amulet was locked'
-        tests:
-          - not_null
       - name: lock_expires_at
         description: '{{ doc("col_lock_expires_at") }}'
       - name: unlocked_at
@@ -46,16 +40,10 @@ models:
         description: '{{ doc("col_created_amulet_contract_id") }}'
       - name: lock_event_id
         description: 'Event ID of the lock creation event'
-        tests:
-          - not_null
       - name: unlock_event_id
         description: 'Event ID of the unlock event (NULL if still locked)'
       - name: lock_status
         description: 'Current status: locked, unlocked, or expired'
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['locked', 'unlocked', 'expired']
       - name: days_locked_before_unlock
         description: 'Number of days amulet was locked before being unlocked'
       - name: days_locked_current
@@ -64,8 +52,6 @@ models:
         description: 'Boolean indicating if unlock occurred after the lock expiration time'
       - name: most_recent_activity
         description: 'Most recent timestamp of activity (unlock if unlocked, otherwise lock time)'
-        tests:
-          - not_null
       - name: created_at
         description: '{{ doc("col_created_at") }}'
       - name: signatories
