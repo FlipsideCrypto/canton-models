@@ -54,7 +54,6 @@ jobs:
           dbt run -m models/bronze/bronze__updates.sql;
           dbt run -m models/bronze/bronze__updates.sql;
           dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m "canton_models,tag:core";
 
 
   notify-failure:
