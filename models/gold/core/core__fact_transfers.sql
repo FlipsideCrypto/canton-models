@@ -21,12 +21,7 @@ WITH transfer_events AS (
     FROM
         {{ ref('silver__events') }}
     WHERE
-        choice IN (
-            'AmuletRules_Transfer',
-            'TransferCommand_Send',
-            'TransferFactory_Transfer',
-            'TransferPreapproval_Send'
-        )
+        choice = 'AmuletRules_Transfer'
 
     {% if is_incremental() %}
     AND modified_timestamp >= (
@@ -46,54 +41,41 @@ SELECT
     choice,
     event_json:acting_parties AS acting_parties,
 
-    -- Choice arguments (extracted from various nested levels depending on choice)
-    COALESCE(
-        event_json:choice_argument:amount::NUMBER(38,10),
-        event_json:choice_argument:transfer:inputs[0]:value:amount::NUMBER(38,10)
-    ) AS amount,
-
-    COALESCE(
-        event_json:choice_argument:sender::STRING,
-        event_json:choice_argument:transfer:sender::STRING,
-        event_json:exercise_result:sender::STRING
-    ) AS sender,
-
-    COALESCE(
-        event_json:choice_argument:receiver::STRING,
-        event_json:choice_argument:transfer:outputs[0]:receiver::STRING
-    ) AS receiver,
-
-    COALESCE(
-        event_json:choice_argument:provider::STRING,
-        event_json:choice_argument:transfer:provider::STRING
-    ) AS provider,
-
-    event_json:choice_argument:delegate::STRING AS delegate,
-    event_json:choice_argument:description::STRING AS description,
-    event_json:choice_argument:nonce::STRING AS nonce,
-    event_json:choice_argument:expiresAt::TIMESTAMP_NTZ AS expires_at,
+    -- Transfer details from choice_argument
+    event_json:choice_argument:transfer:sender::STRING AS sender,
+    event_json:choice_argument:transfer:provider::STRING AS provider,
+    COALESCE(event_json:choice_argument:transfer:outputs[0]:receiver::STRING,sender) AS receiver,
+    COALESCE(event_json:choice_argument:transfer:outputs[0]:amount::NUMBER(38,10),0) AS amount,
+    event_json:choice_argument:transfer:outputs[0]:receiverFeeRatio::NUMBER(38,10) AS receiver_fee_ratio,
+    event_json:choice_argument:transfer:outputs[0]:lock AS lock,
+    event_json:choice_argument:transfer:inputs AS inputs,
+    event_json:choice_argument:transfer:beneficiaries AS beneficiaries,
     event_json:choice_argument:expectedDso::STRING AS expected_dso,
 
-    -- Full context and transfer objects for detailed analysis
-    event_json:choice_argument:context AS context,
-    event_json:choice_argument:transfer AS transfer_object,
+    -- Context from choice_argument
+    event_json:choice_argument:context:featuredAppRight::STRING AS featured_app_right,
+    event_json:choice_argument:context:openMiningRound::STRING AS open_mining_round,
+    event_json:choice_argument:context:issuingMiningRounds AS issuing_mining_rounds,
+    event_json:choice_argument:context:validatorRights AS validator_rights,
 
-    -- Exercise results
-    event_json:exercise_result:transferCommandCid::STRING AS transfer_command_cid,
-    event_json:exercise_result:transferPreapprovalCid::STRING AS transfer_preapproval_cid,
-    COALESCE(
-        event_json:exercise_result:amuletPaid::NUMBER(38,10),
-        event_json:exercise_result:summary:inputAmuletAmount::NUMBER(38,10)
-    ) AS amulet_amount,
-    event_json:exercise_result:summary AS transfer_summary,
-    event_json:exercise_result:meta AS transfer_meta,
+    -- Exercise result - round and summary
+    event_json:exercise_result:round:number::NUMBER AS round_number,
+    event_json:exercise_result:summary:amuletPrice::NUMBER(38,10) AS amulet_price,
+    event_json:exercise_result:summary:inputAmuletAmount::NUMBER(38,10) AS input_amulet_amount,
+    event_json:exercise_result:summary:senderChangeAmount::NUMBER(38,10) AS sender_change_amount,
+    event_json:exercise_result:summary:senderChangeFee::NUMBER(38,10) AS sender_change_fee,
+    event_json:exercise_result:summary:holdingFees::NUMBER(38,10) AS holding_fees,
+    event_json:exercise_result:summary:balanceChanges AS balance_changes,
+
+    -- Exercise result - created amulets and metadata
+    event_json:exercise_result:createdAmulets AS created_amulets,
+    event_json:exercise_result:senderChangeAmulet::STRING AS sender_change_amulet,
+    event_json:exercise_result:meta:values AS transfer_meta,
 
     -- Contract details
-    event_json:event_type::STRING AS event_type,
     event_json:contract_id::STRING AS contract_id,
-    event_json:package_name::STRING AS package_name,
     event_json:template_id::STRING AS template_id,
-    event_json:consuming::BOOLEAN AS consuming,
+     event_json:consuming::BOOLEAN AS consuming,
 
     -- Metadata
     {{ dbt_utils.generate_surrogate_key(['event_id']) }} AS fact_transfer_id,

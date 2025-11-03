@@ -210,27 +210,33 @@ Tracks unlocking/unstaking of locked amulets through exercise events. Joins to c
 {% docs core__fact_transfers %}
 
 ## Description
-Comprehensive fact table tracking all amulet transfer operations across multiple transfer-related choices. Handles various transfer types including direct transfers, transfer commands, factory transfers, and preapproved transfers.
+Fact table tracking AmuletRules_Transfer operations, which represent direct amulet transfers on the Canton network. Captures detailed information about sender, receiver, transfer amounts, fees, and resulting balance changes. Each transfer includes context about the current mining round and DSO state.
 
 ## Key Use Cases
-- Analyzing transfer volume and patterns
-- Tracking sender/receiver relationships
-- Understanding transfer amounts and fees
-- Monitoring different transfer mechanisms (direct, command, preapproval, factory)
+- Analyzing transfer volume and patterns between parties
+- Tracking sender/receiver relationships and transfer flows
+- Understanding transfer amounts, fees, and change calculations
+- Monitoring amulet price at time of transfer
+- Analyzing balance changes resulting from transfers
+- Linking transfers to specific mining rounds
 
 ## Important Relationships
-- Links to balance changes through `event_id`
-- References rounds and amulet rules through context
-- Provider field links to service providers facilitating transfers
+- Links to `core__fact_balance_changes` via `event_id` for detailed balance impacts per party
+- References mining rounds via `round_number`
+- Links to `core__fact_round_opens` via `open_mining_round` contract ID
+- Provider field identifies validators facilitating transfers
 
 ## Commonly-used Fields
-- `choice`: Type of transfer (AmuletRules_Transfer, TransferCommand_Send, etc.)
-- `amount`: Transfer amount (from choice_argument)
-- `sender`: Sending party
-- `receiver`: Receiving party
-- `provider`: Service provider facilitating the transfer
-- `amulet_amount`: Actual amulet paid (from exercise_result)
-- `transfer_summary`: Summary of transfer including fees and amounts
+- `sender`: Party sending the amulet
+- `receiver`: Party receiving the amulet
+- `provider`: Validator facilitating the transfer
+- `transfer_amount`: Amount being transferred to receiver
+- `input_amulet_amount`: Total input amulet amount
+- `sender_change_amount`: Change returned to sender
+- `round_number`: Mining round when transfer occurred
+- `amulet_price`: USD price of amulet at time of transfer
+- `balance_changes`: Array of balance changes per party
+- `transfer_meta`: Metadata including sender and tx-kind
 
 {% enddocs %}
 
