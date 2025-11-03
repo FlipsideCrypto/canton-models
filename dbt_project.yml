@@ -92,6 +92,12 @@ vars:
       ROLES:
         - AWS_LAMBDA_CANTON_API
         - INTERNAL_DEV
+    dev-xs:
+      API_INTEGRATION: AWS_CANTON_API_STG_V2
+      EXTERNAL_FUNCTION_URI: owx5z51jzf.execute-api.us-east-1.amazonaws.com/stg/
+      ROLES:
+        - AWS_LAMBDA_CANTON_API
+        - INTERNAL_DEV
 
     prod:
       API_INTEGRATION: AWS_CANTON_API_PROD_V2
