@@ -28,6 +28,13 @@ WHERE
             {{ this }}
     )
 {% endif %}
+
+qualify ROW_NUMBER() over (
+    PARTITION BY update_id,
+    migration_id
+    ORDER BY
+        _inserted_timestamp DESC
+) = 1
 )
 SELECT
     update_id,
@@ -54,9 +61,4 @@ FROM
     base_updates,
     LATERAL FLATTEN(
         input => update_json :events_by_id
-    ) f qualify ROW_NUMBER() over (
-        PARTITION BY event_id,
-        migration_id
-        ORDER BY
-            _inserted_timestamp DESC
-    ) = 1
+    ) f
