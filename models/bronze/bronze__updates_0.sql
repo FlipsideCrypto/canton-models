@@ -17,6 +17,8 @@ WITH max_record_time AS (
 
 {% if is_incremental() %}
 {{ this }}
+WHERE
+    record_time :: DATE <= '2024-10-16'
 {% else %}
     (
         SELECT
