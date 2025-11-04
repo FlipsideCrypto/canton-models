@@ -54,6 +54,11 @@ jobs:
           dbt run -m models/bronze/bronze__updates_0.sql;
           dbt run -m models/bronze/bronze__updates_0.sql;
           dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
 
 
   notify-failure:
