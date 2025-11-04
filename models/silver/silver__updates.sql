@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['effective_at', 'migration_id'],
+    unique_key = ['effective_at', 'migration_id','update_id'],
     cluster_by = ['effective_at::DATE', 'migration_id'],
     incremental_strategy = 'merge',
     tags = ['core']
