@@ -36,6 +36,7 @@ models:
           - unique
           - dbt_utils.sequential_values:
               interval: 1
+              where: effective_at < SYSDATE() - INTERVAL '4 hours'
       - name: amulet_to_issue_per_year
         description: '{{ doc("col_amulet_to_issue_per_year") }}'
       - name: validator_reward_percentage

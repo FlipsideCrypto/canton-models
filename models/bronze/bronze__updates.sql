@@ -7,7 +7,7 @@
 WITH max_record_time AS (
 
     SELECT
-        MAX(record_time) max_record_time,
+        DATEADD('minute', -1, MAX(record_time)) max_record_time,
         to_varchar(
             max_record_time,
             'YYYY-MM-DD"T"HH24:MI:SS.FF6"Z"'
@@ -20,8 +20,8 @@ WITH max_record_time AS (
 {% else %}
     (
         SELECT
-            '2024-10-01' :: datetime AS record_time,
-            1 AS migration_id
+            '2024-01-01' :: datetime AS record_time,
+            0 AS migration_id
     )
 {% endif %}
 ),

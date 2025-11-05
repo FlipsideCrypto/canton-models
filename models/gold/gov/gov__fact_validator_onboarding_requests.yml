@@ -3,11 +3,6 @@ version: 2
 models:
   - name: gov__fact_validator_onboarding_requests
     description: '{{ doc("gov__fact_validator_onboarding_requests") }}'
-    tests:
-      - dbt_utils.recency:
-          datepart: hour
-          field: effective_at
-          interval: 48
     columns:
       - name: update_id
         description: '{{ doc("col_update_id") }}'

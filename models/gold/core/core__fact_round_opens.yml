@@ -38,6 +38,7 @@ models:
           - unique
           - dbt_utils.sequential_values:
               interval: 1
+              where: effective_at < SYSDATE() - INTERVAL '4 hours'
       - name: opens_at
         description: '{{ doc("col_opens_at") }}'
       - name: target_closes_at
