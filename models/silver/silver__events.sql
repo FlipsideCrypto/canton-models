@@ -1,7 +1,7 @@
 {{ config(
     materialized = 'incremental',
     unique_key = ['effective_at', 'migration_id', 'event_id'],
-    cluster_by = ['effective_at::DATE', 'migration_id'],
+    cluster_by = ['modified_timestamp::DATE'],
     incremental_strategy = 'merge',
     incremental_predicates = ["dynamic_range_predicate", "effective_at::date"],
     merge_exclude_columns = ["inserted_timestamp"],
