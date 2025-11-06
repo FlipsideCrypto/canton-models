@@ -8,6 +8,10 @@ models:
           datepart: hour
           field: effective_at
           interval: 24
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - event_id
+            - output_index
     columns:
       - name: update_id
         description: '{{ doc("col_update_id") }}'
@@ -25,7 +29,6 @@ models:
         description: '{{ doc("col_event_id") }}'
         tests:
           - not_null
-          - unique
       - name: event_index
         description: '{{ doc("col_event_index") }}'
         tests:
@@ -36,8 +39,10 @@ models:
           - not_null
           - accepted_values:
               values: ['AmuletRules_Transfer']
-      - name: acting_parties
-        description: '{{ doc("col_acting_parties") }}'
+      - name: output_index
+        description: 'Index of this output within the transfer outputs array (0-based)'
+        tests:
+          - not_null
       - name: sender
         description: '{{ doc("col_sender") }}'
         tests:
@@ -47,57 +52,21 @@ models:
         tests:
           - not_null
       - name: receiver
-        description: '{{ doc("col_receiver") }}'
+        description: 'Party receiving this output of the transfer'
+        tests:
+          - not_null
       - name: amount
-        description: 'Amount being transferred to receiver'
+        description: 'Amount being transferred to this receiver in this output'
         tests:
           - not_null
       - name: receiver_fee_ratio
-        description: 'Fee ratio for the receiver'
-      - name: receiver_lock
-        description: 'Lock details if the transfer creates a locked amulet'
-      - name: transfer_inputs
-        description: 'Array of input amulets used in the transfer'
-      - name: beneficiaries
-        description: 'Optional beneficiaries for the transfer'
-      - name: expected_dso
-        description: '{{ doc("col_expected_dso") }}'
-      - name: featured_app_right
-        description: 'Featured app right contract ID from context'
-      - name: open_mining_round
-        description: 'Open mining round contract ID from context'
-      - name: issuing_mining_rounds
-        description: 'Array of issuing mining rounds from context'
-      - name: validator_rights
-        description: 'Validator rights from context'
-      - name: round_number
-        description: '{{ doc("col_round_number") }}'
-        tests:
-          - not_null
-      - name: amulet_price
-        description: 'USD price of amulet at time of transfer'
-      - name: input_amulet_amount
-        description: 'Total input amulet amount'
-      - name: sender_change_amount
-        description: 'Change amount returned to sender'
-      - name: sender_change_fee
-        description: 'Fee charged on sender change'
-      - name: holding_fees
-        description: 'Holding fees charged in the transfer'
-      - name: balance_changes
-        description: 'Array of balance changes per party'
-      - name: created_amulets
-        description: 'Array of newly created amulet contracts'
-      - name: sender_change_amulet
-        description: 'Contract ID of the sender change amulet'
-      - name: transfer_meta
-        description: 'Metadata including sender and tx-kind'
-      - name: contract_id
-        description: '{{ doc("col_contract_id") }}'
-      - name: template_id
-        description: '{{ doc("col_template_id") }}'
+        description: 'Fee ratio for this receiver output'
+      - name: lock
+        description: 'Lock details if this output creates a locked amulet'
+      - name: tx_kind
+        description: 'Transaction kind from transfer metadata (e.g., payment, reward)'
       - name: fact_transfer_id
-        description: 'Surrogate key generated from event_id'
+        description: 'Surrogate key generated from event_id and output_index'
         tests:
           - not_null
           - unique

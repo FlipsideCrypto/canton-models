@@ -1,0 +1,94 @@
+version: 2
+
+models:
+  - name: core__fact_transfer_summary
+    description: '{{ doc("core__fact_transfer_summary") }}'
+    columns:
+      - name: fact_transfer_summary_id
+        description: 'Surrogate key for the transfer summary'
+        tests:
+          - not_null
+          - unique
+      - name: event_id
+        description: 'Unique identifier for the transfer event'
+        tests:
+          - not_null
+          - unique
+      - name: update_id
+        description: 'Update ID from the Canton updates stream'
+      - name: migration_id
+        description: 'Migration ID from the Canton updates stream'
+      - name: record_time
+        description: 'Record time from the Canton updates stream'
+      - name: effective_at
+        description: 'Effective timestamp of the transfer'
+        tests:
+          - not_null
+      - name: event_index
+        description: 'Index of this event within the update'
+      - name: choice
+        description: 'Choice type (always AmuletRules_Transfer for this table)'
+      - name: acting_parties
+        description: 'Parties that executed the transfer'
+      - name: sender
+        description: 'Party sending the amulet'
+        tests:
+          - not_null
+      - name: provider
+        description: 'Provider party for the transfer'
+      - name: receivers
+        description: 'Array of receiver parties from all outputs, ordered by output index'
+      - name: sender_change_fee
+        description: 'Total sender change fee for the transfer'
+      - name: holding_fees
+        description: 'Total holding fees for the transfer'
+      - name: num_outputs
+        description: 'Number of outputs in this transfer'
+      - name: total_receiver_fee_ratio
+        description: 'Sum of all receiver_fee_ratio values across outputs'
+      - name: total_output_fees
+        description: 'Sum of all output fees across outputs'
+      - name: amulet_price
+        description: 'Amulet price at time of transfer'
+      - name: input_amulet_amount
+        description: 'Total amount of input amulets'
+      - name: sender_change_amount
+        description: 'Amount returned to sender as change'
+      - name: balance_changes
+        description: 'Array of balance changes resulting from the transfer'
+      - name: inputs
+        description: 'Array of input amulets used in the transfer'
+      - name: outputs
+        description: 'Array of transfer outputs (see core__fact_transfers for flattened version)'
+      - name: beneficiaries
+        description: 'Beneficiaries involved in the transfer'
+      - name: expected_dso
+        description: 'Expected DSO party'
+      - name: featured_app_right
+        description: 'Featured app right from context'
+      - name: open_mining_round
+        description: 'Open mining round from context'
+      - name: issuing_mining_rounds
+        description: 'Issuing mining rounds from context'
+      - name: validator_rights
+        description: 'Validator rights from context'
+      - name: round_number
+        description: 'Mining round number when transfer occurred'
+      - name: created_amulets
+        description: 'Array of amulets created by this transfer'
+      - name: sender_change_amulet
+        description: 'Contract ID of sender change amulet'
+      - name: transfer_meta
+        description: 'Metadata values from the transfer exercise result'
+      - name: tx_kind
+        description: 'Transaction kind from transfer metadata (e.g., payment, reward)'
+      - name: contract_id
+        description: 'Contract ID of the AmuletRules contract'
+      - name: template_id
+        description: 'Template ID (always AmuletRules for transfers)'
+      - name: consuming
+        description: 'Whether this event consumed the contract'
+      - name: inserted_timestamp
+        description: 'Timestamp when record was inserted'
+      - name: modified_timestamp
+        description: 'Timestamp when record was last modified'

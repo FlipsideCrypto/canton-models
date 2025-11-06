@@ -210,33 +210,69 @@ Tracks unlocking/unstaking of locked amulets through exercise events. Joins to c
 {% docs core__fact_transfers %}
 
 ## Description
-Fact table tracking AmuletRules_Transfer operations, which represent direct amulet transfers on the Canton network. Captures detailed information about sender, receiver, transfer amounts, fees, and resulting balance changes. Each transfer includes context about the current mining round and DSO state.
+Fact table tracking individual outputs from AmuletRules_Transfer operations on the Canton network. This table is at the output level - each row represents one output from a transfer, where a single transfer event may create multiple outputs to different receivers. Contains sender, receiver, transfer amounts, and lock details. For event-level summary information including total fees and context, see `core__fact_transfer_summary`.
 
 ## Key Use Cases
-- Analyzing transfer volume and patterns between parties
+- Analyzing transfer volume and patterns between parties at output level
 - Tracking sender/receiver relationships and transfer flows
-- Understanding transfer amounts, fees, and change calculations
-- Monitoring amulet price at time of transfer
-- Analyzing balance changes resulting from transfers
-- Linking transfers to specific mining rounds
+- Understanding individual output amounts per receiver
+- Aggregating outputs by receiver to calculate total received amounts
+- Analyzing locked amulet creation via output lock details
 
 ## Important Relationships
+- Links to `core__fact_transfer_summary` via `event_id` for event-level fees, context, and aggregates
 - Links to `core__fact_balance_changes` via `event_id` for detailed balance impacts per party
-- References mining rounds via `round_number`
-- Links to `core__fact_round_opens` via `open_mining_round` contract ID
+- Multiple rows with same `event_id` represent different outputs of the same transfer
 - Provider field identifies validators facilitating transfers
 
 ## Commonly-used Fields
+- `event_id`: Links to event-level summary
+- `output_index`: Index of this output within the transfer (0-based)
 - `sender`: Party sending the amulet
-- `receiver`: Party receiving the amulet
+- `receiver`: Party receiving this output of the transfer
 - `provider`: Validator facilitating the transfer
-- `transfer_amount`: Amount being transferred to receiver
-- `input_amulet_amount`: Total input amulet amount
+- `amount`: Amount being transferred to this receiver in this output
+- `receiver_fee_ratio`: Fee ratio for this receiver output
+- `lock`: Lock details if this output creates a locked amulet
+- `tx_kind`: Transaction kind (e.g., payment, reward)
+
+{% enddocs %}
+
+{% docs core__fact_transfer_summary %}
+
+## Description
+Event-level summary table for AmuletRules_Transfer operations on the Canton network. This table contains one row per transfer event with aggregate information including total fees, output counts, mining round context, and full arrays of inputs/outputs. For individual output details, see `core__fact_transfers`.
+
+## Key Use Cases
+- Analyzing total transfer fees and costs per event
+- Understanding transfer context (mining round, DSO state, validator rights)
+- Tracking aggregate transfer metrics (number of outputs, total fees)
+- Examining balance changes and created amulets from transfers
+- Linking transfers to mining rounds and pricing information
+
+## Important Relationships
+- Links to `core__fact_transfers` via `event_id` for flattened output details
+- Links to `core__fact_balance_changes` via `event_id` for detailed balance impacts per party
+- References mining rounds via `round_number`
+- Contains full `outputs` array that is flattened in `core__fact_transfers`
+
+## Commonly-used Fields
+- `event_id`: Unique identifier linking to output-level details
+- `sender`: Party sending the amulet
+- `provider`: Validator facilitating the transfer
+- `receivers`: Array of all receiver parties ordered by output index
+- `sender_change_fee`: Total sender change fee for the transfer
+- `holding_fees`: Total holding fees for the transfer
+- `num_outputs`: Count of outputs in this transfer
+- `total_output_fees`: Sum of all output fees
+- `amulet_price`: USD price of amulet at time of transfer
+- `input_amulet_amount`: Total amount of input amulets
 - `sender_change_amount`: Change returned to sender
 - `round_number`: Mining round when transfer occurred
-- `amulet_price`: USD price of amulet at time of transfer
+- `outputs`: Full array of transfer outputs
 - `balance_changes`: Array of balance changes per party
 - `transfer_meta`: Metadata including sender and tx-kind
+- `tx_kind`: Transaction kind (e.g., payment, reward)
 
 {% enddocs %}
 
