@@ -32,7 +32,8 @@ models:
         description: Token address identifier for the asset on Canton
         tests:
           - unique
-          - not_null
+          - not_null:
+              where: not is_native
       - name: ASSET_ID
         description: Unique identifier for the asset across the crosschain database
       - name: SYMBOL
