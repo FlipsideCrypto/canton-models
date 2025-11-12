@@ -7,7 +7,7 @@
 WITH max_record_time AS (
 
     SELECT
-        MAX(record_time) max_record_time,
+        GREATEST(MAX(record_time), '2025-10-21') max_record_time,
         to_varchar(
             max_record_time,
             'YYYY-MM-DD"T"HH24:MI:SS.FF6"Z"'
@@ -18,12 +18,12 @@ WITH max_record_time AS (
 {% if is_incremental() %}
 {{ this }}
 WHERE
-    record_time :: DATE <= '2024-10-16'
+    record_time :: DATE <= '2025-10-26'
 {% else %}
     (
         SELECT
-            '2024-01-01' :: datetime AS record_time,
-            0 AS migration_id
+            '2024-10-21' :: datetime AS record_time,
+            3 AS migration_id
     )
 {% endif %}
 ),
