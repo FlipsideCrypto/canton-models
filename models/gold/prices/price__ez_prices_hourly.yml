@@ -1,0 +1,80 @@
+version: 2
+
+models:
+  - name: price__ez_prices_hourly
+    description: |-
+      Analytics-ready hourly token prices for Canton blockchain.
+      This table provides clean, deduplicated price data with additional metadata flags
+      including native token identification (Amulet/CNS) and verification status.
+
+      **Key Use Cases:**
+      - Historical price analysis for Canton tokens
+      - USD value calculations for transfer amounts
+      - Native token (Amulet) price tracking
+      - Token verification and deprecation monitoring
+
+      **Important Notes:**
+      - Prices are in USD and represent the close price rolled forward 1 hour
+      - Deduplicated by token_address and hour using most recent modified_timestamp
+      - Includes both native Canton tokens and other assets on the network
+      - Native token (Amulet/CNS) is flagged with is_native = TRUE
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: modified_timestamp
+          interval: 72
+    columns:
+      - name: HOUR
+        description: Hourly timestamp for the price snapshot
+        tests:
+          - not_null
+      - name: TOKEN_ADDRESS
+        description: Token address identifier for the asset on Canton
+        tests:
+          - not_null:
+              where: not is_native
+      - name: SYMBOL
+        description: Token symbol (e.g., CNS, USDC)
+        tests:
+          - not_null
+      - name: NAME
+        description: Full name of the token
+      - name: DECIMALS
+        description: Number of decimal places for the token
+      - name: PRICE
+        description: USD price of the token at the given hour
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: BLOCKCHAIN
+        description: Blockchain identifier (always 'canton' for this model)
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['canton']
+      - name: IS_NATIVE
+        description: Boolean flag indicating if this is the native Canton token (Amulet/CNS)
+        tests:
+          - not_null
+      - name: IS_DEPRECATED
+        description: Boolean indicating if this token is deprecated
+      - name: IS_IMPUTED
+        description: Boolean indicating if this price was imputed/estimated
+      - name: TOKEN_IS_VERIFIED
+        description: Boolean indicating if this token has been verified
+        tests:
+          - not_null
+      - name: EZ_PRICES_HOURLY_ID
+        description: Surrogate key generated from token_address and hour
+        tests:
+          - unique
+          - not_null
+      - name: INSERTED_TIMESTAMP
+        description: Timestamp when the record was inserted into this table
+        tests:
+          - not_null
+      - name: MODIFIED_TIMESTAMP
+        description: Timestamp when the record was last modified
+        tests:
+          - not_null
