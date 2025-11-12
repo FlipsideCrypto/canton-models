@@ -31,7 +31,8 @@ models:
       - name: TOKEN_ADDRESS
         description: Token address identifier for the asset on Canton
         tests:
-          - not_null
+          - not_null:
+              where: not is_native
       - name: SYMBOL
         description: Token symbol (e.g., CNS, USDC)
         tests:
