@@ -1,0 +1,117 @@
+version: 2
+
+models:
+  - name: core__ez_token_transfers
+    description: |-
+      Analytics-ready token transfers with price enrichment for Canton blockchain.
+      This table extends the base transfers fact table by adding human-readable amounts,
+      USD values, and token metadata for easy analysis.
+
+      **Key Use Cases:**
+      - Transfer value analysis in both native units and USD
+      - Historical transfer tracking with consistent decimal handling
+      - Foundation for CEX flow analysis and other enriched views
+
+      **Important Relationships:**
+      - Base table: `core__fact_transfers`
+      - Price data: `price__ez_prices_hourly`
+      - Used by: `core__ez_cex_flows`
+
+      **Commonly-used Fields:**
+      - `sender`/`receiver`: Party IDs involved in the transfer
+      - `amount`: Human-readable transfer amount (adjusted for decimals)
+      - `amount_usd`: USD value at time of transfer
+      - `effective_at`: Transfer timestamp
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: effective_at
+          interval: 24
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - event_id
+            - output_index
+    columns:
+      - name: UPDATE_ID
+        description: Unique identifier for the Canton update containing this event
+        tests:
+          - not_null
+      - name: MIGRATION_ID
+        description: Canton migration identifier
+      - name: RECORD_TIME
+        description: Node record timestamp
+      - name: EFFECTIVE_AT
+        description: Effective timestamp of the transfer
+        tests:
+          - not_null
+      - name: EVENT_ID
+        description: Unique identifier for the transfer event
+        tests:
+          - not_null
+      - name: EVENT_INDEX
+        description: Index of this event within the update
+        tests:
+          - not_null
+      - name: CHOICE
+        description: Transfer choice type (always AmuletRules_Transfer)
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['AmuletRules_Transfer']
+      - name: OUTPUT_INDEX
+        description: Index of this output within the transfer outputs array
+        tests:
+          - not_null
+      - name: SENDER
+        description: Party sending the tokens
+        tests:
+          - not_null
+      - name: PROVIDER
+        description: Validator/provider facilitating the transfer
+        tests:
+          - not_null
+      - name: RECEIVER
+        description: Party receiving this output
+        tests:
+          - not_null
+      - name: AMOUNT_RAW
+        description: Raw transfer amount before decimal adjustment
+        tests:
+          - not_null
+      - name: AMOUNT
+        description: Human-readable transfer amount (adjusted for token decimals)
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: AMOUNT_USD
+        description: USD value of the transfer at the time of execution
+      - name: PRICE
+        description: Token price in USD at the hour of transfer
+      - name: SYMBOL
+        description: Token symbol (e.g., CNS for Canton native token)
+      - name: DECIMALS
+        description: Number of decimal places for the token
+      - name: TOKEN_IS_VERIFIED
+        description: Boolean indicating if the token is verified
+        tests:
+          - not_null
+      - name: RECEIVER_FEE_RATIO
+        description: Fee ratio for this receiver output
+      - name: LOCK
+        description: Lock details if this output creates a locked amulet
+      - name: TX_KIND
+        description: Transaction kind from transfer metadata
+      - name: EZ_TOKEN_TRANSFERS_ID
+        description: Surrogate key for this transfer output
+        tests:
+          - unique
+          - not_null
+      - name: INSERTED_TIMESTAMP
+        description: Timestamp when record was inserted
+        tests:
+          - not_null
+      - name: MODIFIED_TIMESTAMP
+        description: Timestamp when record was last modified
+        tests:
+          - not_null

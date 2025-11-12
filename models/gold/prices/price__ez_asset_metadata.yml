@@ -1,0 +1,74 @@
+version: 2
+
+models:
+  - name: price__ez_asset_metadata
+    description: |-
+      Analytics-ready token asset metadata for Canton blockchain.
+      This table provides reference data for all tokens available on Canton,
+      including token symbols, names, decimals, and verification status.
+
+      **Key Use Cases:**
+      - Token lookup and identification
+      - Decimal conversion for raw amounts
+      - Token verification status checks
+      - Native token (Amulet/CNS) identification
+
+      **Important Relationships:**
+      - Join to `price__ez_prices_hourly` on token_address for price data
+      - Join to core transfer/balance tables for token amount conversions
+
+      **Commonly-used Fields:**
+      - `token_address`: Primary identifier for joining with other tables
+      - `symbol`: Human-readable token symbol
+      - `decimals`: Required for converting raw amounts to human-readable values
+      - `is_native`: Flag for identifying Canton's native token (Amulet/CNS)
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: modified_timestamp
+          interval: 72
+    columns:
+      - name: TOKEN_ADDRESS
+        description: Token address identifier for the asset on Canton
+        tests:
+          - unique
+          - not_null
+      - name: ASSET_ID
+        description: Unique identifier for the asset across the crosschain database
+      - name: SYMBOL
+        description: Token symbol (e.g., CNS, USDC)
+        tests:
+          - not_null
+      - name: NAME
+        description: Full name of the token
+      - name: DECIMALS
+        description: Number of decimal places for the token
+      - name: BLOCKCHAIN
+        description: Blockchain identifier (always 'canton' for this model)
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['canton']
+      - name: IS_NATIVE
+        description: Boolean flag indicating if this is the native Canton token (Amulet/CNS)
+        tests:
+          - not_null
+      - name: IS_DEPRECATED
+        description: Boolean indicating if this token is deprecated
+      - name: TOKEN_IS_VERIFIED
+        description: Boolean indicating if this token has been verified
+        tests:
+          - not_null
+      - name: EZ_ASSET_METADATA_ID
+        description: Surrogate key generated from complete_token_asset_metadata_id
+        tests:
+          - unique
+          - not_null
+      - name: INSERTED_TIMESTAMP
+        description: Timestamp when the record was inserted into this table
+        tests:
+          - not_null
+      - name: MODIFIED_TIMESTAMP
+        description: Timestamp when the record was last modified
+        tests:
+          - not_null

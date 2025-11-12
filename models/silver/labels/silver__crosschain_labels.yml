@@ -1,0 +1,51 @@
+version: 2
+
+models:
+  - name: silver__crosschain_labels
+    description: |-
+      Silver layer view of address labels for Canton blockchain.
+      Sources label data from the crosschain database, filtered for Canton-specific addresses.
+      Includes address names, project associations, label types, and deletion flags.
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: modified_timestamp
+          interval: 72
+    columns:
+      - name: BLOCKCHAIN
+        description: Blockchain identifier (always 'canton' for this model)
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['canton']
+      - name: ADDRESS
+        description: Canton address/party ID being labeled
+        tests:
+          - not_null
+      - name: CREATOR
+        description: Entity or system that created the label
+      - name: LABEL_TYPE
+        description: High-level category of the label (e.g., dex, cex, defi)
+      - name: LABEL_SUBTYPE
+        description: Subcategory providing more specific classification
+      - name: ADDRESS_NAME
+        description: Human-readable name for the address
+      - name: PROJECT_NAME
+        description: Name of the project or protocol associated with the address
+      - name: _IS_DELETED
+        description: Boolean flag indicating if the label has been marked for deletion
+        tests:
+          - not_null
+      - name: LABELS_COMBINED_ID
+        description: Unique identifier for the label record
+        tests:
+          - unique
+          - not_null
+      - name: INSERTED_TIMESTAMP
+        description: Timestamp when the label was first created
+        tests:
+          - not_null
+      - name: MODIFIED_TIMESTAMP
+        description: Timestamp when the label was last modified
+        tests:
+          - not_null

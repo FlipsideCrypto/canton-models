@@ -14,10 +14,11 @@ sources:
       - name: address_tags
       - name: dim_dates
   - name: crosschain_silver
-    database: "{{ 'crosschain' if target.database == 'CANTON' else 'crosschain_dev' }}"
+    database: crosschain
+    # "{{ 'crosschain' if target.database == 'CANTON' else 'crosschain_dev' }}"
     schema: silver
     tables:
       - name: number_sequence
       - name: labels_combined
-      - name: complete_token_asset_metadata
-      - name: complete_token_prices
+      - name: complete_native_asset_metadata
+      - name: complete_native_prices

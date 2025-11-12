@@ -1,0 +1,118 @@
+version: 2
+
+models:
+  - name: core__ez_cex_flows
+    description: |-
+      Centralized exchange (CEX) deposit, withdrawal, and internal transfer flows for Canton.
+      This view filters token transfers to show only those involving CEX addresses,
+      with directional classification and exchange identification.
+
+      **Key Use Cases:**
+      - Track CEX deposit and withdrawal volumes
+      - Identify CEX-to-CEX internal transfers
+      - Monitor exchange activity and liquidity flows
+      - Analyze specific exchange behavior on Canton
+
+      **Important Relationships:**
+      - Base table: `core__ez_token_transfers`
+      - Label data: `core__dim_labels` (filtered for label_type = 'cex')
+
+      **Commonly-used Fields:**
+      - `direction`: Classification as 'deposit', 'withdrawal', 'internal_transfer', or 'inter_exchange_transfer'
+      - `exchange_name`: Name of the CEX involved in the transfer
+      - `amount_usd`: USD value of the flow
+      - `sender`/`receiver`: Party IDs for detailed flow tracking
+
+      **Direction Logic:**
+      - **deposit**: Tokens flowing TO a CEX address (receiver is CEX)
+      - **withdrawal**: Tokens flowing FROM a CEX address (sender is CEX)
+      - **internal_transfer**: Both sender and receiver are the same CEX
+      - **inter_exchange_transfer**: Transfer between two different CEXs
+
+      **Important Notes:**
+      - Only includes transfers where at least one party is labeled as a CEX
+      - Requires CEX addresses to be properly labeled in `core__dim_labels`
+      - View materialization provides real-time filtering on base transfers table
+    tests:
+      - dbt_utils.recency:
+          datepart: hour
+          field: effective_at
+          interval: 24
+    columns:
+      - name: UPDATE_ID
+        description: Unique identifier for the Canton update
+        tests:
+          - not_null
+      - name: MIGRATION_ID
+        description: Canton migration identifier
+      - name: RECORD_TIME
+        description: Node record timestamp
+      - name: EFFECTIVE_AT
+        description: Effective timestamp of the transfer
+        tests:
+          - not_null
+      - name: EVENT_ID
+        description: Unique identifier for the transfer event
+        tests:
+          - not_null
+      - name: EVENT_INDEX
+        description: Index of this event within the update
+      - name: CHOICE
+        description: Transfer choice type
+      - name: OUTPUT_INDEX
+        description: Index of this output within the transfer
+      - name: SENDER
+        description: Party sending the tokens
+        tests:
+          - not_null
+      - name: PROVIDER
+        description: Validator/provider facilitating the transfer
+      - name: RECEIVER
+        description: Party receiving the tokens
+        tests:
+          - not_null
+      - name: AMOUNT_RAW
+        description: Raw transfer amount before decimal adjustment
+      - name: AMOUNT
+        description: Human-readable transfer amount
+        tests:
+          - not_null
+      - name: AMOUNT_USD
+        description: USD value of the transfer
+      - name: PRICE
+        description: Token price in USD at time of transfer
+      - name: SYMBOL
+        description: Token symbol
+      - name: DECIMALS
+        description: Token decimal places
+      - name: TOKEN_IS_VERIFIED
+        description: Token verification status
+      - name: RECEIVER_FEE_RATIO
+        description: Fee ratio for the receiver
+      - name: LOCK
+        description: Lock details if applicable
+      - name: TX_KIND
+        description: Transaction kind metadata
+      - name: EZ_TOKEN_TRANSFERS_ID
+        description: Surrogate key from base table
+      - name: INSERTED_TIMESTAMP
+        description: Record insertion timestamp
+      - name: MODIFIED_TIMESTAMP
+        description: Record modification timestamp
+      - name: EXCHANGE_NAME
+        description: Name of the CEX involved (from label project_name)
+        tests:
+          - not_null
+      - name: DIRECTION
+        description: |-
+          Flow direction relative to CEX: 'deposit' (to CEX), 'withdrawal' (from CEX),
+          'internal_transfer' (same CEX to same CEX), or 'inter_exchange_transfer' (CEX to different CEX)
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['deposit', 'withdrawal', 'internal_transfer', 'inter_exchange_transfer']
+      - name: INTER_EXCHANGE_TRANSFER_RECEIVING_EXCHANGE
+        description: |-
+          Name of the receiving exchange for inter-exchange transfers.
+          Only populated when direction = 'inter_exchange_transfer' (transfer between two different CEXs).
+          NULL for all other transfer types (deposits, withdrawals, internal transfers).
