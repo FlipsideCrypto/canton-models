@@ -5,9 +5,9 @@ on:
   workflow_dispatch:
     branches:
       - "main"
-  schedule:
-    # Runs every 30 minutes
-    - cron: "*/60 * * * *" 
+  # schedule:
+  #   # Runs every 30 minutes
+  #   - cron: "*/60 * * * *" 
       
     
 env:
@@ -45,49 +45,49 @@ jobs:
           dbt deps
       - name: Run DBT Jobs
         run: |
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
-          dbt run -m models/bronze/bronze__updates.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
+          dbt run -m models/bronze/bronze__updates_0.sql;
 
 
   notify-failure:
