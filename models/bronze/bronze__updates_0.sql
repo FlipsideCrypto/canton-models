@@ -7,7 +7,7 @@
 WITH max_record_time AS (
 
     SELECT
-        GREATEST(MAX(record_time), '2025-11-05' max_record_time,
+        GREATEST(MAX(record_time), '2025-11-05') max_record_time,
         to_varchar(
             max_record_time,
             'YYYY-MM-DD"T"HH24:MI:SS.FF6"Z"'
@@ -22,7 +22,7 @@ WHERE
 {% else %}
     (
         SELECT
-            '2024-10-21' :: datetime AS record_time,
+            '2025-11-05' :: datetime AS record_time,
             3 AS migration_id
     )
 {% endif %}
