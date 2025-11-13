@@ -54,10 +54,10 @@ WHERE
     amount IS NOT NULL
 
 {% if is_incremental() %}
-    AND t.modified_timestamp >= (
+    AND t.modified_timestamp >= dateadd('hour',-6,(
         SELECT
             MAX(modified_timestamp)
         FROM
             {{ this }}
-    )
+    ))
 {% endif %}
