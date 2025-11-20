@@ -21,11 +21,14 @@ WITH base_updates AS (
 
 {% if is_incremental() %}
 WHERE
-    inserted_timestamp >= (
-        SELECT
-            MAX(modified_timestamp)
-        FROM
-            {{ this }}
+    inserted_timestamp >= DATEADD(
+        'minute',
+        -5,(
+            SELECT
+                MAX(modified_timestamp)
+            FROM
+                {{ this }}
+        )
     )
 {% endif %}
 
