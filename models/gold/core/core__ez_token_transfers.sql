@@ -23,11 +23,7 @@ SELECT
     t.receiver,
     t.amount AS amount_raw,
     -- Amount calculations with decimals
-    CASE
-        WHEN COALESCE(p.decimals, 0) <> 0
-        THEN t.amount / POWER(10, p.decimals)
-        ELSE t.amount / POWER(10, 10) -- Default to 10 decimals for Amulet if price data unavailable
-    END AS amount,
+    amount,
     ROUND(
         amount * p.price,
         2
